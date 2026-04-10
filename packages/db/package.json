@@ -1,0 +1,24 @@
+{
+  "name": "@healthquest/db",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "studio": "prisma studio",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "prisma": "latest",
+    "@prisma/client": "latest"
+  },
+  "devDependencies": {
+    "@healthquest/config": "workspace:*",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  }
+}

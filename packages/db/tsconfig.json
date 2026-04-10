@@ -1,0 +1,9 @@
+{
+  "extends": "@healthquest/config/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts", "__tests__/**/*.ts"],
+  "exclude": ["node_modules", "dist", "generated"]
+}
