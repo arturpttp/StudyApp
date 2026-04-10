@@ -1,0 +1,16 @@
+{
+  "name": "healthquest",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @healthquest/web dev",
+    "build": "pnpm --filter @healthquest/web build",
+    "db:generate": "pnpm --filter @healthquest/db generate",
+    "db:push": "pnpm --filter @healthquest/db db:push",
+    "db:studio": "pnpm --filter @healthquest/db studio",
+    "db:test": "pnpm --filter @healthquest/db test",
+    "test": "pnpm -r test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
