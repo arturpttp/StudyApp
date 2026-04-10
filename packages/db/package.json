@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "prisma": "latest",
-    "@prisma/client": "latest"
+    "@prisma/client": "latest",
+    "dotenv": "^16.0.0"
   },
   "devDependencies": {
     "@healthquest/config": "workspace:*",

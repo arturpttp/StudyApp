@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -103,7 +102,23 @@ model ExamQuestion {
   @@id([examId, questionId])
 }
 
-enum Role       { ADMIN STUDENT }
-enum Difficulty { EASY MEDIUM HARD }
-enum Status     { ACTIVE ARCHIVED }
-enum ExamStatus { IN_PROGRESS FINISHED }
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Status {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ExamStatus {
+  IN_PROGRESS
+  FINISHED
+}
