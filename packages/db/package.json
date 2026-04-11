@@ -13,9 +13,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "prisma": "latest",
+    "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "latest",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "pg": "^8.20.0",
+    "prisma": "latest"
   },
   "devDependencies": {
     "@healthquest/config": "workspace:*",
