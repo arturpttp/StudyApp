@@ -40,3 +40,27 @@ Route handlers return a consistent JSON shape for errors:
 - Vitest config loads `.env.local` via `dotenv` in `setupFiles` — mirrors the `packages/db` pattern.
 - Integration tests scope their data by prefixing identifiers with `__test_` so cleanup is a single `deleteMany({ where: { ...: { startsWith: '__test_' } } })`.
 - No `@testing-library/react` or `jsdom` until we genuinely need component rendering tests — keeps the dev-dependency surface small.
+
+## Theming
+
+The app ships three themes — `light`, `dark`, `code` — switched via the `data-theme` attribute on `<html>` by `next-themes`. Default on first visit is `light` (explicit, not `prefers-color-scheme`). Persistence is `localStorage` only, no DB column.
+
+**Semantic tokens** (defined in `src/app/globals.css` via `@theme inline`):
+
+| Token utility | Use for |
+|---|---|
+| `bg-background` | Page background |
+| `bg-surface` | Cards, headers, inputs, raised surfaces |
+| `text-foreground` | Primary body text and headings |
+| `text-muted` | Secondary text, labels, captions |
+| `border-border` | All borders and dividers |
+| `bg-primary` / `text-primary-foreground` | Primary action buttons |
+| `text-accent` / `focus:border-accent` | Accent / focus highlights |
+| `text-danger` | Error messages, destructive actions |
+
+**Rules:**
+
+- **Never** introduce a hardcoded `slate-*`, `bg-white`, `text-white`, or `text-red-*` utility in committed code. If a token is missing, add it to `globals.css` (a new CSS variable on every `[data-theme]` block plus the `@theme inline` mapping) and use the new utility.
+- The `code` theme redirects `--font-sans` to Geist Mono. Any element using `font-sans` (the default) automatically renders mono in the code theme. Don't add explicit `font-mono` utilities unless you want mono in *all* themes.
+- The `ThemeSwitcher` component is `'use client'`; it must guard against SSR with a `mounted` flag to avoid the next-themes hydration mismatch. Server components consuming theme tokens through Tailwind utilities don't need any client boundary — the variables resolve at paint time.
+- Adding a new protected page? It only needs the right tokens; the switcher and theme provider already live in the layout.
