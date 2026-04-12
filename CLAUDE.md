@@ -14,3 +14,13 @@
 - Each commit should represent a single logical unit of work.
 - Write commit messages in English.
 - Never commit broken or half-finished code to main.
+
+## Development Strategy
+- Always use TDD (Test Driven Development). This is non-negotiable and paramount.
+- Write failing tests first, then implement the minimum code to make them pass, then refactor.
+- Never skip TDD — no implementation code without a preceding test.
+
+## Pattern Documentation
+- When a new pattern emerges in the codebase, document it in a **local CLAUDE.md** specific to that directory (e.g. `src/components/CLAUDE.md`, `packages/db/CLAUDE.md`).
+- Before saving any pattern, summarize it and ask the user for confirmation on whether to save and where.
+- Keep each local CLAUDE.md focused on rules and conventions relevant to that directory's domain.
