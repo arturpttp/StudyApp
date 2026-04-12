@@ -22,6 +22,7 @@ model User {
 
 model Question {
   id            String          @id @default(cuid())
+  externalId    String?         @unique
   statement     String
   explanation   String?
   difficulty    Difficulty
@@ -40,9 +41,12 @@ model Alternative {
   id         String          @id @default(cuid())
   text       String
   isCorrect  Boolean
+  position   Int
   question   Question        @relation(fields: [questionId], references: [id])
   questionId String
   answers    AnswerHistory[]
+
+  @@unique([questionId, position])
 }
 
 model Subject {
