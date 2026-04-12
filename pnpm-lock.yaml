@@ -19,12 +19,18 @@ importers:
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
+      geist:
+        specifier: ^1.7.0
+        version: 1.7.0(next@16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
       next:
         specifier: ^16.2.3
         version: 16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       next-auth:
         specifier: 5.0.0-beta.30
         version: 5.0.0-beta.30(next@16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react:
         specifier: ^19.1.0
         version: 19.2.5
@@ -1127,6 +1133,11 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  geist@1.7.0:
+    resolution: {integrity: sha512-ZaoiZwkSf0DwwB1ncdLKp+ggAldqxl5L1+SXaNIBGkPAqcu+xjVJLxlf3/S8vLt9UHx1xu5fz3lbzKCj5iOVdQ==}
+    peerDependencies:
+      next: '>=13.2.0'
+
   generate-function@2.3.1:
     resolution: {integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==}
 
@@ -1294,6 +1305,12 @@ packages:
         optional: true
       nodemailer:
         optional: true
+
+  next-themes@0.4.6:
+    resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
 
   next@16.2.3:
     resolution: {integrity: sha512-9V3zV4oZFza3PVev5/poB9g0dEafVcgNyQ8eTRop8GvxZjV2G15FC5ARuG1eFD42QgeYkzJBJzHghNP8Ad9xtA==}
@@ -2508,6 +2525,10 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  geist@1.7.0(next@16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)):
+    dependencies:
+      next: 16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+
   generate-function@2.3.1:
     dependencies:
       is-property: 1.0.2
@@ -2633,6 +2654,11 @@ snapshots:
       '@auth/core': 0.41.0
       next: 16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
+
+  next-themes@0.4.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+    dependencies:
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   next@16.2.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
