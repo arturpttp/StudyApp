@@ -2,6 +2,7 @@
   "extends": "@healthquest/config/tsconfig.nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "declaration": false,
     "paths": {
       "@/*": ["./src/*"]
     }
