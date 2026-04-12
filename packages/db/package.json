@@ -10,6 +10,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "studio": "prisma studio",
+    "seed": "tsx prisma/seed.ts",
     "test": "vitest run"
   },
   "dependencies": {
@@ -21,7 +22,13 @@
   },
   "devDependencies": {
     "@healthquest/config": "workspace:*",
+    "csv-parse": "^6.2.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.0",
-    "vitest": "^3.1.0"
+    "vitest": "^3.1.0",
+    "zod": "^4.3.6"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
