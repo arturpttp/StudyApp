@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerSchema } from "@/lib/auth/schemas";
+import { PasswordInput } from "@/components/PasswordInput";
 
 type FieldErrors = Partial<
   Record<"name" | "email" | "password" | "confirmPassword", string>
@@ -127,12 +128,10 @@ export default function RegisterPage() {
         </label>
         <label className="block text-sm">
           <span className="mb-1 block text-muted">Senha</span>
-          <input
-            type="password"
+          <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className={inputClass}
           />
           {fieldErrors.password && (
             <span className="mt-1 block text-xs text-danger">
@@ -142,12 +141,10 @@ export default function RegisterPage() {
         </label>
         <label className="block text-sm">
           <span className="mb-1 block text-muted">Confirmar senha</span>
-          <input
-            type="password"
+          <PasswordInput
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className={inputClass}
           />
           {fieldErrors.confirmPassword && (
             <span className="mt-1 block text-xs text-danger">

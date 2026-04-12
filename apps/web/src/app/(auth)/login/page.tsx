@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { loginSchema } from "@/lib/auth/schemas";
+import { PasswordInput } from "@/components/PasswordInput";
 
 function LoginForm() {
   const router = useRouter();
@@ -57,12 +58,10 @@ function LoginForm() {
       </label>
       <label className="block text-sm">
         <span className="mb-1 block text-muted">Senha</span>
-        <input
-          type="password"
+        <PasswordInput
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full rounded border border-border bg-surface px-3 py-2 text-foreground focus:border-accent focus:outline-none"
         />
       </label>
       {error && (
