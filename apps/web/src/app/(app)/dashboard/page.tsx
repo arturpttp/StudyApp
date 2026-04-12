@@ -6,10 +6,10 @@ export default async function DashboardPage() {
 
   return (
     <section className="space-y-2">
-      <h1 className="text-2xl font-semibold text-slate-900">
+      <h1 className="text-2xl font-semibold text-foreground">
         Bem-vindo, {name}
       </h1>
-      <p className="text-slate-600">
+      <p className="text-muted">
         Esta é a sua área protegida. Em breve: banco de questões, simulados e
         flashcards.
       </p>

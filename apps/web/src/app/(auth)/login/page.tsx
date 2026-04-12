@@ -46,34 +46,34 @@ function LoginForm() {
   return (
     <form className="space-y-3" onSubmit={onSubmit}>
       <label className="block text-sm">
-        <span className="mb-1 block text-slate-700">E-mail</span>
+        <span className="mb-1 block text-muted">E-mail</span>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full rounded border border-slate-300 px-3 py-2"
+          className="w-full rounded border border-border bg-surface px-3 py-2 text-foreground focus:border-accent focus:outline-none"
         />
       </label>
       <label className="block text-sm">
-        <span className="mb-1 block text-slate-700">Senha</span>
+        <span className="mb-1 block text-muted">Senha</span>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full rounded border border-slate-300 px-3 py-2"
+          className="w-full rounded border border-border bg-surface px-3 py-2 text-foreground focus:border-accent focus:outline-none"
         />
       </label>
       {error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-danger" role="alert">
           {error}
         </p>
       )}
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded bg-slate-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="w-full rounded bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
       >
         {submitting ? "Entrando..." : "Entrar"}
       </button>
@@ -84,13 +84,13 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-slate-900">Entrar</h1>
-      <Suspense fallback={<p className="text-sm text-slate-500">Carregando...</p>}>
+      <h1 className="text-2xl font-semibold text-foreground">Entrar</h1>
+      <Suspense fallback={<p className="text-sm text-muted">Carregando...</p>}>
         <LoginForm />
       </Suspense>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted">
         Novo por aqui?{" "}
-        <Link href="/register" className="text-slate-900 underline">
+        <Link href="/register" className="text-foreground underline">
           Criar conta
         </Link>
       </p>

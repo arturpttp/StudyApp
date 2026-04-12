@@ -88,86 +88,89 @@ export default function RegisterPage() {
     router.refresh();
   }
 
+  const inputClass =
+    "w-full rounded border border-border bg-surface px-3 py-2 text-foreground focus:border-accent focus:outline-none";
+
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-slate-900">Criar conta</h1>
+      <h1 className="text-2xl font-semibold text-foreground">Criar conta</h1>
       <form className="space-y-3" onSubmit={onSubmit}>
         <label className="block text-sm">
-          <span className="mb-1 block text-slate-700">Nome</span>
+          <span className="mb-1 block text-muted">Nome</span>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full rounded border border-slate-300 px-3 py-2"
+            className={inputClass}
           />
           {fieldErrors.name && (
-            <span className="mt-1 block text-xs text-red-600">
+            <span className="mt-1 block text-xs text-danger">
               {fieldErrors.name}
             </span>
           )}
         </label>
         <label className="block text-sm">
-          <span className="mb-1 block text-slate-700">E-mail</span>
+          <span className="mb-1 block text-muted">E-mail</span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full rounded border border-slate-300 px-3 py-2"
+            className={inputClass}
           />
           {fieldErrors.email && (
-            <span className="mt-1 block text-xs text-red-600">
+            <span className="mt-1 block text-xs text-danger">
               {fieldErrors.email}
             </span>
           )}
         </label>
         <label className="block text-sm">
-          <span className="mb-1 block text-slate-700">Senha</span>
+          <span className="mb-1 block text-muted">Senha</span>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full rounded border border-slate-300 px-3 py-2"
+            className={inputClass}
           />
           {fieldErrors.password && (
-            <span className="mt-1 block text-xs text-red-600">
+            <span className="mt-1 block text-xs text-danger">
               {fieldErrors.password}
             </span>
           )}
         </label>
         <label className="block text-sm">
-          <span className="mb-1 block text-slate-700">Confirmar senha</span>
+          <span className="mb-1 block text-muted">Confirmar senha</span>
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="w-full rounded border border-slate-300 px-3 py-2"
+            className={inputClass}
           />
           {fieldErrors.confirmPassword && (
-            <span className="mt-1 block text-xs text-red-600">
+            <span className="mt-1 block text-xs text-danger">
               {fieldErrors.confirmPassword}
             </span>
           )}
         </label>
         {error && (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-sm text-danger" role="alert">
             {error}
           </p>
         )}
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded bg-slate-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
           {submitting ? "Criando conta..." : "Criar conta"}
         </button>
       </form>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted">
         Já tem uma conta?{" "}
-        <Link href="/login" className="text-slate-900 underline">
+        <Link href="/login" className="text-foreground underline">
           Entrar
         </Link>
       </p>

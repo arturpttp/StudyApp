@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { SignOutButton } from "@/components/SignOutButton";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 export default async function AppLayout({
   children,
@@ -13,11 +14,12 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
-        <span className="font-semibold text-slate-900">HealthQuest</span>
-        <div className="flex items-center gap-3 text-sm text-slate-700">
+    <div className="min-h-screen bg-background">
+      <header className="flex items-center justify-between border-b border-border bg-surface px-6 py-3">
+        <span className="font-semibold text-foreground">HealthQuest</span>
+        <div className="flex items-center gap-3 text-sm text-muted">
           <span>{session.user.name ?? session.user.email}</span>
+          <ThemeSwitcher />
           <SignOutButton />
         </div>
       </header>
