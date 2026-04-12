@@ -13,6 +13,7 @@ describe("authorizeCredentials", () => {
         name: "Test Authorize",
         email: EMAIL,
         password: await hashPassword(PASSWORD),
+        emailVerified: new Date(),
       },
     });
   });
@@ -68,5 +69,22 @@ describe("authorizeCredentials", () => {
     });
     expect(result).not.toBeNull();
     expect(result?.email).toBe(EMAIL);
+  });
+
+  it("returns null for unverified email", async () => {
+    const unverifiedEmail = `__test_authorize_unverified_${Date.now()}@example.com`;
+    await prisma.user.create({
+      data: {
+        name: "Test Unverified",
+        email: unverifiedEmail,
+        password: await hashPassword(PASSWORD),
+        // emailVerified intentionally omitted — null by default
+      },
+    });
+    const result = await authorizeCredentials({
+      email: unverifiedEmail,
+      password: PASSWORD,
+    });
+    expect(result).toBeNull();
   });
 });

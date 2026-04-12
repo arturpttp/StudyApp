@@ -11,15 +11,19 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const verified = searchParams.get("verified");
+  const urlError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [unverified, setUnverified] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setUnverified(false);
 
     const parsed = loginSchema.safeParse({ email, password });
     if (!parsed.success) {
@@ -28,6 +32,19 @@ function LoginForm() {
     }
 
     setSubmitting(true);
+
+    const checkRes = await fetch("/api/auth/check-verification", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: parsed.data.email }),
+    });
+    const checkData = await checkRes.json();
+    if (checkData.status === "unverified") {
+      setSubmitting(false);
+      setUnverified(true);
+      return;
+    }
+
     const result = await signIn("credentials", {
       email: parsed.data.email,
       password: parsed.data.password,
@@ -46,6 +63,40 @@ function LoginForm() {
 
   return (
     <>
+      <div className="space-y-2">
+        {verified && (
+          <p className="text-sm text-accent" role="status">
+            E-mail confirmado! Faça login.
+          </p>
+        )}
+        {urlError === "link-invalido" && (
+          <p className="text-sm text-danger" role="alert">
+            Link de verificação inválido ou expirado.
+          </p>
+        )}
+        {unverified && (
+          <div className="space-y-2">
+            <p className="text-sm text-danger" role="alert">
+              Confirme seu e-mail antes de entrar.
+            </p>
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch("/api/auth/resend-verification", {
+                  method: "POST",
+                  headers: { "content-type": "application/json" },
+                  body: JSON.stringify({ email }),
+                });
+                setUnverified(false);
+                setError("Link de verificação reenviado. Verifique seu e-mail.");
+              }}
+              className="text-sm text-accent underline hover:text-foreground"
+            >
+              Reenviar link de verificação
+            </button>
+          </div>
+        )}
+      </div>
       <form className="space-y-3" onSubmit={onSubmit}>
         <label className="block text-sm">
           <span className="mb-1 block text-muted">E-mail</span>

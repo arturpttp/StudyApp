@@ -12,6 +12,8 @@ export async function authorizeCredentials(raw: unknown) {
 
   if (!user.password) return null;
 
+  if (!user.emailVerified) return null;
+
   const ok = await verifyPassword(parsed.data.password, user.password);
   if (!ok) return null;
 

@@ -1,7 +1,15 @@
-import { describe, it, expect, afterEach, afterAll } from "vitest";
+import { describe, it, expect, afterEach, afterAll, vi } from "vitest";
 import { prisma } from "@healthquest/db";
 import { POST } from "@/app/api/auth/register/route";
 import { verifyPassword } from "@/lib/auth/password";
+
+vi.mock("@/lib/email/resend", () => ({
+  sendVerificationEmail: vi.fn(),
+}));
+
+vi.mock("@/lib/auth/verification", () => ({
+  createVerificationToken: vi.fn().mockResolvedValue({ token: "mock-token" }),
+}));
 
 function makeRequest(body: unknown) {
   return new Request("http://localhost/api/auth/register", {

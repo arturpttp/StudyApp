@@ -73,20 +73,8 @@ export default function RegisterPage() {
       return;
     }
 
-    const signInResult = await signIn("credentials", {
-      email: parsed.data.email,
-      password: parsed.data.password,
-      redirect: false,
-    });
     setSubmitting(false);
-
-    if (!signInResult || signInResult.error) {
-      setError("Conta criada, mas não foi possível entrar. Tente fazer login.");
-      return;
-    }
-
-    router.push("/dashboard");
-    router.refresh();
+    router.push(`/register/check-email?email=${encodeURIComponent(parsed.data.email)}`);
   }
 
   const inputClass =

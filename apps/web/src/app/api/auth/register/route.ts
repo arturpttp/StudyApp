@@ -1,6 +1,8 @@
 import { Prisma, prisma } from "@healthquest/db";
 import { registerSchema } from "@/lib/auth/schemas";
 import { hashPassword } from "@/lib/auth/password";
+import { createVerificationToken } from "@/lib/auth/verification";
+import { sendVerificationEmail } from "@/lib/email/resend";
 
 export async function POST(req: Request): Promise<Response> {
   let body: unknown;
@@ -40,6 +42,13 @@ export async function POST(req: Request): Promise<Response> {
       },
       select: { id: true, name: true, email: true },
     });
+    try {
+      const { token } = await createVerificationToken(normalizedEmail);
+      await sendVerificationEmail(normalizedEmail, token);
+    } catch {
+      // Don't fail registration if email sending fails
+    }
+
     return Response.json(user, { status: 201 });
   } catch (err) {
     if (
