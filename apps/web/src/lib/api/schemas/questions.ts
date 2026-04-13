@@ -23,6 +23,7 @@ export type RandomQuery = z.infer<typeof randomQuerySchema>;
 
 export const answerBodySchema = z.object({
   alternativeId: z.string().min(1, "alternativeId é obrigatório."),
+  responseTime: z.number().int().min(0).optional().default(0),
 });
 
 export type AnswerBody = z.infer<typeof answerBodySchema>;

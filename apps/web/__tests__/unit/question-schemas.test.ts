@@ -77,4 +77,39 @@ describe("answerBodySchema", () => {
     const result = answerBodySchema.safeParse({});
     expect(result.success).toBe(false);
   });
+
+  it("accepts optional responseTime", () => {
+    const result = answerBodySchema.safeParse({
+      alternativeId: "alt123",
+      responseTime: 5000,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.responseTime).toBe(5000);
+    }
+  });
+
+  it("defaults responseTime to 0 when omitted", () => {
+    const result = answerBodySchema.safeParse({ alternativeId: "alt123" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.responseTime).toBe(0);
+    }
+  });
+
+  it("rejects negative responseTime", () => {
+    const result = answerBodySchema.safeParse({
+      alternativeId: "alt123",
+      responseTime: -1,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects non-integer responseTime", () => {
+    const result = answerBodySchema.safeParse({
+      alternativeId: "alt123",
+      responseTime: 1.5,
+    });
+    expect(result.success).toBe(false);
+  });
 });

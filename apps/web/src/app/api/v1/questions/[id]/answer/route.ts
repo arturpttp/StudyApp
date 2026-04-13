@@ -66,7 +66,7 @@ export async function POST(req: Request, ctx: RouteContext): Promise<Response> {
       questionId,
       alternativeId,
       isCorrect: chosen.isCorrect,
-      responseTime: 0,
+      responseTime: parsed.data.responseTime,
     },
   });
 

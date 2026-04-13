@@ -134,4 +134,32 @@ describe("POST /api/v1/questions/[id]/answer", () => {
     });
     expect(res.status).toBe(400);
   });
+
+  it("persists responseTime to answer history", async () => {
+    const res = await POST(
+      makeRequest(questionId, { alternativeId: correctAltId, responseTime: 4200 }),
+      { params: Promise.resolve({ id: questionId }) },
+    );
+    expect(res.status).toBe(200);
+
+    const latest = await prisma.answerHistory.findFirst({
+      where: { userId: TEST_USER_ID, questionId },
+      orderBy: { createdAt: "desc" },
+    });
+    expect(latest!.responseTime).toBe(4200);
+  });
+
+  it("defaults responseTime to 0 when not provided", async () => {
+    const res = await POST(
+      makeRequest(questionId, { alternativeId: correctAltId }),
+      { params: Promise.resolve({ id: questionId }) },
+    );
+    expect(res.status).toBe(200);
+
+    const latest = await prisma.answerHistory.findFirst({
+      where: { userId: TEST_USER_ID, questionId },
+      orderBy: { createdAt: "desc" },
+    });
+    expect(latest!.responseTime).toBe(0);
+  });
 });
