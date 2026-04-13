@@ -4,9 +4,9 @@ const badge = tv({
   base: "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
   variants: {
     difficulty: {
-      EASY: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-      MEDIUM: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-      HARD: "bg-red-500/15 text-red-600 dark:text-red-400",
+      EASY: "bg-badge-easy-bg text-badge-easy-text",
+      MEDIUM: "bg-badge-medium-bg text-badge-medium-text",
+      HARD: "bg-badge-hard-bg text-badge-hard-text",
     },
   },
 });
