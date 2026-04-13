@@ -46,6 +46,12 @@ export type PostApiV1QuestionsIdAnswerMutationRequest = {
      * @type string
     */
     alternativeId: string;
+    /**
+     * @minLength 0
+     * @default 0
+     * @type integer | undefined
+    */
+    responseTime?: number;
 };
 
 export type PostApiV1QuestionsIdAnswerMutationResponse = PostApiV1QuestionsIdAnswer200;

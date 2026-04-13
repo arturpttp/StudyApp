@@ -184,6 +184,7 @@ registry.registerPath({
         "application/json": {
           schema: z.object({
             alternativeId: z.string().min(1),
+            responseTime: z.number().int().min(0).optional().default(0),
           }),
         },
       },

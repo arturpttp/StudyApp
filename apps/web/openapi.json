@@ -424,6 +424,11 @@
                   "alternativeId": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "responseTime": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0
                   }
                 },
                 "required": [
