@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { auth } from "@/lib/auth/config";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -17,6 +18,7 @@ export default async function AppLayout({
   }
 
   return (
+    <NuqsAdapter>
     <div className="min-h-screen bg-background">
       <header className="flex items-center justify-between border-b border-border bg-surface px-6 py-3">
         <Link href="/"><Image src="/logo.png" alt="HealthQuest" width={120} height={40} className="h-10 w-auto" priority /></Link>
@@ -30,5 +32,6 @@ export default async function AppLayout({
           <QueryProvider>{children}</QueryProvider>
         </main>
     </div>
+    </NuqsAdapter>
   );
 }
