@@ -12,7 +12,7 @@ export default defineConfig({
     pluginTs({ output: { path: "./types" } }),
     pluginReactQuery({
       output: { path: "./hooks" },
-      client: { importPath: "../client" },
+      client: { importPath: "../../client" },
     }),
   ],
 });

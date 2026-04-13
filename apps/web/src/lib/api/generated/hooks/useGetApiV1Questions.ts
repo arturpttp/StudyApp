@@ -3,8 +3,8 @@
 * Do not edit manually.
 */
 
-import fetch from "../client";
-import type { Client, RequestConfig, ResponseErrorConfig } from "../client";
+import fetch from "../../client";
+import type { Client, RequestConfig, ResponseErrorConfig } from "../../client";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 import type { GetApiV1QuestionsQueryResponse, GetApiV1QuestionsQueryParams, GetApiV1Questions400, GetApiV1Questions401 } from "../types/GetApiV1Questions.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";

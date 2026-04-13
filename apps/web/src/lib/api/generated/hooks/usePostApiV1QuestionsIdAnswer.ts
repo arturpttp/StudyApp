@@ -3,8 +3,8 @@
 * Do not edit manually.
 */
 
-import fetch from "../client";
-import type { Client, RequestConfig, ResponseErrorConfig } from "../client";
+import fetch from "../../client";
+import type { Client, RequestConfig, ResponseErrorConfig } from "../../client";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import type { PostApiV1QuestionsIdAnswerMutationRequest, PostApiV1QuestionsIdAnswerMutationResponse, PostApiV1QuestionsIdAnswerPathParams, PostApiV1QuestionsIdAnswer400, PostApiV1QuestionsIdAnswer404 } from "../types/PostApiV1QuestionsIdAnswer.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
