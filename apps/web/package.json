@@ -10,9 +10,11 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@healthquest/db": "workspace:*",
     "@tailwindcss/postcss": "^4.2.2",
+    "@tanstack/react-query": "^5.99.0",
     "bcryptjs": "^3.0.3",
     "geist": "^1.7.0",
     "next": "^16.2.3",
@@ -21,11 +23,18 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "resend": "^6.10.0",
+    "tailwind-merge": "^3.5.0",
+    "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4.2.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@healthquest/config": "workspace:*",
+    "@kubb/cli": "^4.37.2",
+    "@kubb/core": "^4.37.2",
+    "@kubb/plugin-oas": "^4.37.2",
+    "@kubb/plugin-react-query": "^4.37.2",
+    "@kubb/plugin-ts": "^4.37.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
