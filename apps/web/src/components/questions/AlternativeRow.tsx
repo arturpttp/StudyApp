@@ -27,7 +27,7 @@ export function AlternativeRow({
   const isWrongPick = isRevealed && isSelected && !result.isCorrect && result.correctAlternativeId !== alternative.id;
   const isDisabled = phase === "submitting";
 
-  let rowClasses = "group/row flex items-center gap-3 rounded-lg border p-3 transition-colors";
+  let rowClasses = "flex items-center gap-3 rounded-lg border p-3 transition-colors";
   if (isCorrect) {
     rowClasses = twMerge(rowClasses, "border-badge-easy-text bg-badge-easy-bg");
   } else if (isWrongPick) {
@@ -55,7 +55,7 @@ export function AlternativeRow({
     badgeClasses = twMerge(badgeClasses, "border-border text-foreground");
   }
 
-  let textClasses = "flex-1 text-sm";
+  let textClasses = "text-sm";
   if (isCorrect) {
     textClasses = twMerge(textClasses, "font-semibold text-badge-easy-text");
   } else if (isWrongPick) {
@@ -80,8 +80,8 @@ export function AlternativeRow({
             onToggleEliminate(alternative.id);
           }}
           className={twMerge(
-            "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-opacity cursor-pointer text-muted hover:text-foreground",
-            isEliminated ? "opacity-100" : "opacity-0 group-hover/row:opacity-100",
+            "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors cursor-pointer hover:text-foreground",
+            isEliminated ? "text-foreground" : "text-muted",
           )}
           aria-label={isEliminated ? `Restaurar alternativa ${letter}` : `Eliminar alternativa ${letter}`}
         >
@@ -90,15 +90,15 @@ export function AlternativeRow({
       ) : (
         <span className="h-5 w-5 shrink-0" aria-hidden="true" />
       )}
-      <span className={badgeClasses}>{letter}</span>
 
       <button
         type="button"
         disabled={isDisabled || isRevealed}
         onClick={() => onSelect(alternative.id)}
-        className={twMerge(textClasses, "text-left cursor-pointer disabled:cursor-default")}
+        className="flex flex-1 items-center gap-3 text-left cursor-pointer disabled:cursor-default"
       >
-        {alternative.text}
+        <span className={badgeClasses}>{letter}</span>
+        <span className={textClasses}>{alternative.text}</span>
       </button>
     </div>
   );
