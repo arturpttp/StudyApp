@@ -328,8 +328,10 @@ AUTH_URL="http://localhost:3000"
 2. **Auth** — Auth.js, rotas de cadastro/login, proteção por middleware
 3. **Seed** — 50+ questões de teste via `prisma/seed.ts`
 4. **API core** — Endpoints de questões com todos os filtros + pipeline Kubb
+4.5. **API docs** — OpenAPI spec via `zod-to-openapi` + Scalar UI interativa em `/api-docs`
 5. **Frontend base** — Página de banco de questões consumindo hooks gerados
 6. **Fluxo de resposta** — Enviar resposta, revelar explicação, salvar histórico
+6.5. **Estado persistente de resposta** — Ao abrir uma questão já respondida, exibir a alternativa escolhida, o gabarito e a explicação em estado bloqueado (sem permitir nova seleção ou envio). Um botão **Resetar** limpa o estado da UI e libera nova tentativa — a tentativa anterior permanece no `AnswerHistory`, e a nova tentativa é salva como linha adicional. Fonte de verdade: última linha de `AnswerHistory` do par `(userId, questionId)`.
 7. **Simulados** — Fluxo de geração e finalização
 8. **Flashcards** — Loop de revisão SM-2
 9. **Estatísticas** — Queries agregadas + Radar Chart

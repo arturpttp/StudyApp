@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth/config";
 import { redirect } from "next/navigation";
 import { DifficultyBadge } from "@/components/ui/DifficultyBadge";
 import { QuestionSolver } from "@/components/questions/QuestionSolver";
+import { getPreviousAnswer } from "@/lib/questions/get-previous-answer";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -36,6 +37,11 @@ export default async function QuestionDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const previousAnswer = await getPreviousAnswer({
+    userId: session.user.id,
+    questionId: question.id,
+  });
+
   return (
     <section className="mx-auto max-w-3xl space-y-6">
       <Link
@@ -58,7 +64,7 @@ export default async function QuestionDetailPage({ params }: PageProps) {
         )}
       </div>
 
-      <QuestionSolver question={question} />
+      <QuestionSolver question={question} previousAnswer={previousAnswer} />
     </section>
   );
 }

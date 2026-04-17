@@ -13,20 +13,32 @@ interface Alternative {
   position: number;
 }
 
+export interface PreviousAnswer {
+  alternativeId: string;
+  isCorrect: boolean;
+  correctAlternativeId: string;
+  explanation: string | null;
+}
+
 export interface QuestionSolverProps {
   question: {
     id: string;
     statement: string;
     alternatives: Alternative[];
   };
+  previousAnswer?: PreviousAnswer | null;
 }
 
 type Phase = "answering" | "submitting" | "revealed";
 
-export function QuestionSolver({ question }: QuestionSolverProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+export function QuestionSolver({ question, previousAnswer = null }: QuestionSolverProps) {
+  const [selectedId, setSelectedId] = useState<string | null>(
+    previousAnswer?.alternativeId ?? null,
+  );
   const [eliminatedIds, setEliminatedIds] = useState<Set<string>>(new Set());
-  const [result, setResult] = useState<PostApiV1QuestionsIdAnswer200 | null>(null);
+  const [result, setResult] = useState<PostApiV1QuestionsIdAnswer200 | null>(
+    previousAnswer ?? null,
+  );
   const [elapsedMs, setElapsedMs] = useState(0);
 
   const startRef = useRef(Date.now());
@@ -36,21 +48,30 @@ export function QuestionSolver({ question }: QuestionSolverProps) {
   const isSubmitting = mutation.isPending;
   const currentPhase: Phase = result ? "revealed" : isSubmitting ? "submitting" : "answering";
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setElapsedMs(Date.now() - startRef.current);
-    }, 1000);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
-
   const stopTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+  }, []);
+
+  const startTimer = useCallback(() => {
+    stopTimer();
+    startRef.current = Date.now();
+    setElapsedMs(0);
+    intervalRef.current = setInterval(() => {
+      setElapsedMs(Date.now() - startRef.current);
+    }, 1000);
+  }, [stopTimer]);
+
+  useEffect(() => {
+    if (!previousAnswer) {
+      startTimer();
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleSelect(altId: string) {
@@ -90,6 +111,14 @@ export function QuestionSolver({ question }: QuestionSolverProps) {
         },
       },
     );
+  }
+
+  function handleReset() {
+    setSelectedId(null);
+    setEliminatedIds(new Set());
+    setResult(null);
+    mutation.reset();
+    startTimer();
   }
 
   return (
@@ -154,6 +183,9 @@ export function QuestionSolver({ question }: QuestionSolverProps) {
               {result.explanation}
             </p>
           )}
+          <Button variant="outline" className="mt-4" onClick={handleReset}>
+            Refazer questão
+          </Button>
         </div>
       )}
     </div>
