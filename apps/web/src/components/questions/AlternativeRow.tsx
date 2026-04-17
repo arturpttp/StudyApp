@@ -27,7 +27,7 @@ export function AlternativeRow({
   const isWrongPick = isRevealed && isSelected && !result.isCorrect && result.correctAlternativeId !== alternative.id;
   const isDisabled = phase === "submitting";
 
-  let rowClasses = "flex items-center gap-3 rounded-lg border p-3 transition-colors";
+  let rowClasses = "group/row flex items-center gap-3 rounded-lg border p-3 transition-colors";
   if (isCorrect) {
     rowClasses = twMerge(rowClasses, "border-badge-easy-text bg-badge-easy-bg");
   } else if (isWrongPick) {
@@ -72,22 +72,25 @@ export function AlternativeRow({
 
   return (
     <div className={rowClasses}>
-      <div className="group/badge relative">
-        {phase === "answering" && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleEliminate(alternative.id);
-            }}
-            className="absolute inset-0 z-10 flex items-center justify-center rounded-full opacity-0 group-hover/badge:opacity-100 transition-opacity cursor-pointer text-muted hover:text-foreground"
-            aria-label={isEliminated ? `Restaurar alternativa ${letter}` : `Eliminar alternativa ${letter}`}
-          >
-            <ScissorsIcon />
-          </button>
-        )}
-        <span className={badgeClasses}>{letter}</span>
-      </div>
+      {phase === "answering" ? (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleEliminate(alternative.id);
+          }}
+          className={twMerge(
+            "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-opacity cursor-pointer text-muted hover:text-foreground",
+            isEliminated ? "opacity-100" : "opacity-0 group-hover/row:opacity-100",
+          )}
+          aria-label={isEliminated ? `Restaurar alternativa ${letter}` : `Eliminar alternativa ${letter}`}
+        >
+          <ScissorsIcon />
+        </button>
+      ) : (
+        <span className="h-5 w-5 shrink-0" aria-hidden="true" />
+      )}
+      <span className={badgeClasses}>{letter}</span>
 
       <button
         type="button"
