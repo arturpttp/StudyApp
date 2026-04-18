@@ -28,3 +28,6 @@ postgres_data/
 
 # Test
 coverage/
+
+# Brainstorming session files
+.superpowers/

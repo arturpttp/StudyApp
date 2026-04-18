@@ -335,3 +335,4 @@ AUTH_URL="http://localhost:3000"
 7. **Simulados** — Fluxo de geração e finalização
 8. **Flashcards** — Loop de revisão SM-2
 9. **Estatísticas** — Queries agregadas + Radar Chart
+10. **Exportação** — Exportar relatórios de qualquer simulado e informações gerais em PDF e JSON
