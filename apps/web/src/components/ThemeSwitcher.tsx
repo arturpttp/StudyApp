@@ -107,7 +107,7 @@ export function ThemeSwitcher() {
       onClick={() => setTheme(next)}
       aria-label="Alternar tema"
       title={`Tema atual: ${LABELS[current]}. Trocar para ${LABELS[next]}.`}
-      className="inline-flex h-8 w-8 items-center justify-center rounded border border-border bg-surface text-foreground hover:bg-background"
+      className="cursor-pointer inline-flex h-8 w-8 items-center justify-center rounded border border-border bg-surface text-foreground hover:bg-background"
     >
       <Icon />
     </button>

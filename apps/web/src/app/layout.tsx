@@ -7,6 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "HealthQuest",
   description: "Plataforma de estudos para profissionais da saúde",
+  icons: { icon: "/favicon.png" },
 };
 
 export default function RootLayout({

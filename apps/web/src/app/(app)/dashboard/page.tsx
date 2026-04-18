@@ -1,3 +1,7 @@
+import { Button } from "@/components/ui/Button";
+import { DifficultyBadge } from "@/components/ui/DifficultyBadge";
+import { PaginationControl } from "@/components/ui/PaginationControl";
+import { Select } from "@/components/ui/Select";
 import { auth } from "@/lib/auth/config";
 
 export default async function DashboardPage() {

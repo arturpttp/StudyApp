@@ -23,9 +23,12 @@ function CheckEmailContent() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-foreground">
-        Verifique seu e-mail
-      </h1>
+      <div className="flex flex-col items-center gap-2">
+        <img src="/logo.png" alt="HealthQuest" width={120} height={80} className="h-20 w-auto" />
+        <h1 className="text-2xl font-semibold text-foreground">
+          Verifique seu e-mail
+        </h1>
+      </div>
       <p className="text-sm text-muted">
         Enviamos um link de verificação para{" "}
         <span className="font-medium text-foreground">{email}</span>.
@@ -39,7 +42,7 @@ function CheckEmailContent() {
             type="button"
             onClick={handleResend}
             disabled={resending}
-            className="text-sm text-accent underline hover:text-foreground disabled:opacity-50"
+            className="cursor-pointer text-sm text-accent underline hover:text-foreground disabled:opacity-50"
           >
             {resending ? "Reenviando..." : "Não recebeu? Reenviar link"}
           </button>

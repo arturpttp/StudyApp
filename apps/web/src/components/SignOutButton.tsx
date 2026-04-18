@@ -7,7 +7,7 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={() => signOut({ callbackUrl: "/login" })}
-      className="rounded border border-border px-3 py-1 text-sm text-foreground hover:bg-background"
+      className="cursor-pointer rounded border border-border px-3 py-1 text-sm text-foreground hover:bg-background"
     >
       Sair
     </button>

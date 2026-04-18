@@ -31,3 +31,6 @@ coverage/
 
 # Brainstorming session files
 .superpowers/
+
+# TypeScript incremental build info
+*.tsbuildinfo
