@@ -6,5 +6,9 @@ import Google from "next-auth/providers/google";
 export default {
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
-  providers: [GitHub, Discord, Google],
+  providers: [
+    GitHub({ allowDangerousEmailAccountLinking: true }),
+    Discord({ allowDangerousEmailAccountLinking: true }),
+    Google({ allowDangerousEmailAccountLinking: true }),
+  ],
 } satisfies NextAuthConfig;
