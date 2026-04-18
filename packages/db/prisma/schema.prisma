@@ -59,13 +59,14 @@ model Question {
 }
 
 model Alternative {
-  id         String          @id @default(cuid())
-  text       String
-  isCorrect  Boolean
-  position   Int
-  question   Question        @relation(fields: [questionId], references: [id])
-  questionId String
-  answers    AnswerHistory[]
+  id             String          @id @default(cuid())
+  text           String
+  isCorrect      Boolean
+  position       Int
+  question       Question        @relation(fields: [questionId], references: [id])
+  questionId     String
+  answers        AnswerHistory[]
+  examSelections ExamQuestion[]
 
   @@unique([questionId, position])
 }
@@ -113,16 +114,19 @@ model Exam {
   questions  ExamQuestion[]
   status     ExamStatus     @default(IN_PROGRESS)
   score      Float?
+  timeLimit  Int?
   createdAt  DateTime       @default(now())
   finishedAt DateTime?
 }
 
 model ExamQuestion {
-  exam       Exam     @relation(fields: [examId], references: [id])
-  examId     String
-  question   Question @relation(fields: [questionId], references: [id])
-  questionId String
-  order      Int
+  exam                  Exam         @relation(fields: [examId], references: [id], onDelete: Cascade)
+  examId                String
+  question              Question     @relation(fields: [questionId], references: [id])
+  questionId            String
+  order                 Int
+  selectedAlternativeId String?
+  selectedAlternative   Alternative? @relation(fields: [selectedAlternativeId], references: [id])
 
   @@id([examId, questionId])
 }
