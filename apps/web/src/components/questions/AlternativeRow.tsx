@@ -6,7 +6,7 @@ interface AlternativeRowProps {
   letter: string;
   isSelected: boolean;
   isEliminated: boolean;
-  phase: "answering" | "submitting" | "revealed";
+  phase: "answering" | "submitting" | "revealed" | "exam-active";
   result: PostApiV1QuestionsIdAnswer200 | null;
   onSelect: (id: string) => void;
   onToggleEliminate: (id: string) => void;
