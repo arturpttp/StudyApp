@@ -27,6 +27,9 @@ export default async function AppLayout({
             <Link href="/questions" className="text-muted hover:text-foreground transition-colors">
               Banco de Questões
             </Link>
+            <Link href="/exams" className="text-muted hover:text-foreground transition-colors">
+              Simulados
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-3 text-sm text-muted">

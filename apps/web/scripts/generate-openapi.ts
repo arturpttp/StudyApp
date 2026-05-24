@@ -214,6 +214,181 @@ registry.registerPath({
   },
 });
 
+// --- Exam schemas ---
+
+const ExamAlternativeSchema = registry.register(
+  "ExamAlternative",
+  z.object({ id: z.string(), text: z.string(), position: z.number().int() }),
+);
+
+const ExamQuestionActiveSchema = registry.register(
+  "ExamQuestionActive",
+  z.object({
+    questionId: z.string(),
+    order: z.number().int(),
+    statement: z.string(),
+    alternatives: z.array(ExamAlternativeSchema),
+    selectedAlternativeId: z.string().nullable(),
+  }),
+);
+
+const ExamQuestionReportSchema = registry.register(
+  "ExamQuestionReport",
+  z.object({
+    questionId: z.string(),
+    order: z.number().int(),
+    statement: z.string(),
+    explanation: z.string().nullable(),
+    alternatives: z.array(ExamAlternativeSchema),
+    selectedAlternativeId: z.string().nullable(),
+    correctAlternativeId: z.string(),
+    isCorrect: z.boolean(),
+  }),
+);
+
+const ExamInProgressSchema = registry.register(
+  "ExamInProgress",
+  z.object({
+    id: z.string(),
+    status: z.literal("IN_PROGRESS"),
+    timeLimit: z.number().int().nullable(),
+    createdAt: z.string().datetime(),
+    questions: z.array(ExamQuestionActiveSchema),
+  }),
+);
+
+const ExamFinishedSchema = registry.register(
+  "ExamFinished",
+  z.object({
+    id: z.string(),
+    status: z.literal("FINISHED"),
+    score: z.number(),
+    timeLimit: z.number().int().nullable(),
+    createdAt: z.string().datetime(),
+    finishedAt: z.string().datetime(),
+    questions: z.array(ExamQuestionReportSchema),
+  }),
+);
+
+// --- Route: POST /api/v1/exams/generate ---
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/exams/generate",
+  summary: "Gerar simulado",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            subjectId: z.string().optional(),
+            difficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
+            count: z.number().int().min(5).max(100),
+            timeLimit: z.number().int().min(5).max(600).nullable().optional(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "Simulado criado",
+      content: {
+        "application/json": { schema: z.object({ id: z.string() }) },
+      },
+    },
+    400: {
+      description: "Dados inválidos",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    422: {
+      description: "Pool insuficiente",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: GET /api/v1/exams/{id} ---
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/exams/{id}",
+  summary: "Buscar simulado (ativo ou finalizado)",
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: "Estado do simulado",
+      content: {
+        "application/json": {
+          schema: z.union([ExamInProgressSchema, ExamFinishedSchema]),
+        },
+      },
+    },
+    404: {
+      description: "Simulado não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: PATCH /api/v1/exams/{id}/questions/{questionId} ---
+
+registry.registerPath({
+  method: "patch",
+  path: "/api/v1/exams/{id}/questions/{questionId}",
+  summary: "Atualizar seleção de alternativa",
+  request: {
+    params: z.object({ id: z.string(), questionId: z.string() }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            alternativeId: z.string().min(1).nullable(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    204: { description: "Seleção salva" },
+    400: {
+      description: "Dados inválidos",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    404: {
+      description: "Não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    409: {
+      description: "Simulado já finalizado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: PATCH /api/v1/exams/{id}/finish ---
+
+registry.registerPath({
+  method: "patch",
+  path: "/api/v1/exams/{id}/finish",
+  summary: "Finalizar simulado",
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: "Relatório final",
+      content: { "application/json": { schema: ExamFinishedSchema } },
+    },
+    404: {
+      description: "Simulado não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    409: {
+      description: "Simulado já finalizado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
 // --- Generate ---
 
 const generator = new OpenApiGeneratorV31(registry.definitions);
