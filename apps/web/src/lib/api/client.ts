@@ -41,6 +41,10 @@ export async function client<TData, TError = unknown, TBody = unknown>(
     throw new Error(body.error ?? `Request failed: ${res.status}`);
   }
 
+  if (res.status === 204) {
+    return { data: undefined as TData };
+  }
+
   const data = await res.json();
   return { data };
 }
