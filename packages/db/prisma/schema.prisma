@@ -49,13 +49,14 @@ model Question {
   difficulty    Difficulty
   status        Status          @default(ACTIVE)
   year          Int?
-  subject       Subject         @relation(fields: [subjectId], references: [id])
-  subjectId     String
+  subject       Subject?        @relation(fields: [subjectId], references: [id])
+  subjectId     String?
   institution   Institution     @relation(fields: [institutionId], references: [id])
   institutionId String
   alternatives  Alternative[]
   answers       AnswerHistory[]
   examQuestions ExamQuestion[]
+  topics        Topic[]
 }
 
 model Alternative {
@@ -72,6 +73,12 @@ model Alternative {
 }
 
 model Subject {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  questions Question[]
+}
+
+model Topic {
   id        String     @id @default(cuid())
   name      String     @unique
   questions Question[]
