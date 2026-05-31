@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePostApiV1ExamsGenerate } from "@/lib/api/generated/hooks/usePostApiV1ExamsGenerate";
+import { useGetApiV1Topics } from "@/lib/api/generated/hooks/useGetApiV1Topics";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { TopicMultiSelect } from "@/components/ui/TopicMultiSelect";
 
 interface Subject {
   id: string;
@@ -18,6 +20,7 @@ interface NewExamFormProps {
 export function NewExamForm({ subjects }: NewExamFormProps) {
   const router = useRouter();
   const mutation = usePostApiV1ExamsGenerate();
+  const { data: topics } = useGetApiV1Topics();
 
   const [subjectId, setSubjectId] = useState<string>("");
   const [difficulty, setDifficulty] = useState<"" | "EASY" | "MEDIUM" | "HARD">("");
@@ -25,6 +28,8 @@ export function NewExamForm({ subjects }: NewExamFormProps) {
   const [timed, setTimed] = useState(false);
   const [timeLimit, setTimeLimit] = useState<number>(60);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [topicIds, setTopicIds] = useState<string[]>([]);
+  const [topicMatchMode, setTopicMatchMode] = useState<"any" | "all">("any");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,6 +42,8 @@ export function NewExamForm({ subjects }: NewExamFormProps) {
           difficulty: difficulty || undefined,
           count,
           timeLimit: timed ? timeLimit : null,
+          topicIds: topicIds.length > 0 ? topicIds : undefined,
+          topicMatchMode: topicIds.length > 1 ? topicMatchMode : undefined,
         },
       },
       {
@@ -97,6 +104,20 @@ export function NewExamForm({ subjects }: NewExamFormProps) {
             <option value="HARD">Difícil</option>
           </select>
         </label>
+
+        <div className="md:col-span-2">
+          <TopicMultiSelect
+            topics={topics ?? []}
+            selectedIds={topicIds}
+            matchMode={topicMatchMode}
+            onToggle={(id) =>
+              setTopicIds((prev) =>
+                prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+              )
+            }
+            onMatchModeChange={setTopicMatchMode}
+          />
+        </div>
 
         <label className="block space-y-1">
           <span className="text-sm text-muted">Quantidade (5–100)</span>
