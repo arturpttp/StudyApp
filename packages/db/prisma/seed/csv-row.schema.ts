@@ -17,6 +17,18 @@ export const csvRowSchema = z.object({
   e: z.string().min(1),
   correct: z.enum(["a", "b", "c", "d", "e"]),
   explanation: z.string().min(10),
+  topics: z
+    .string()
+    .min(1, "Pelo menos uma matéria é obrigatória.")
+    .transform((v) =>
+      v
+        .split(";")
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0),
+    )
+    .refine((arr) => arr.length >= 1, {
+      message: "Pelo menos uma matéria é obrigatória.",
+    }),
 });
 
 export type CsvRow = z.infer<typeof csvRowSchema>;
