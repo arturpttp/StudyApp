@@ -166,4 +166,193 @@ describe("GET /api/v1/questions", () => {
     expect(res.status).toBe(400);
     expect(body).toHaveProperty("error");
   });
+
+  it("filters by a single topic via topicIds=any", async () => {
+    const topicA = await prisma.topic.create({ data: { name: "__test_topicA_single" } });
+    const topicB = await prisma.topic.create({ data: { name: "__test_topicB_single" } });
+
+    const q1 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q1 single",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicA.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+    const q2 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q2 single",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicB.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+
+    try {
+      const url = new URL(`http://test/api/v1/questions?topicIds=${topicA.id}&topicMatchMode=any`);
+      const res = await GET(new Request(url));
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      const ids = body.data.map((q: { id: string }) => q.id);
+      expect(ids).toContain(q1.id);
+      expect(ids).not.toContain(q2.id);
+    } finally {
+      await prisma.alternative.deleteMany({ where: { questionId: { in: [q1.id, q2.id] } } });
+      await prisma.question.deleteMany({ where: { id: { in: [q1.id, q2.id] } } });
+      await prisma.topic.deleteMany({ where: { id: { in: [topicA.id, topicB.id] } } });
+    }
+  });
+
+  it("filters by multiple topics with mode=any (OR)", async () => {
+    const topicA = await prisma.topic.create({ data: { name: "__test_topicA_any" } });
+    const topicB = await prisma.topic.create({ data: { name: "__test_topicB_any" } });
+    const topicC = await prisma.topic.create({ data: { name: "__test_topicC_any" } });
+
+    const q1 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q1 any",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicA.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+    const q2 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q2 any",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicB.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+    const q3 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q3 any",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicC.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+
+    try {
+      const url = new URL(`http://test/api/v1/questions?topicIds=${topicA.id}&topicIds=${topicB.id}&topicMatchMode=any`);
+      const res = await GET(new Request(url));
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      const ids = body.data.map((q: { id: string }) => q.id);
+      expect(ids).toContain(q1.id);
+      expect(ids).toContain(q2.id);
+      expect(ids).not.toContain(q3.id);
+    } finally {
+      await prisma.alternative.deleteMany({ where: { questionId: { in: [q1.id, q2.id, q3.id] } } });
+      await prisma.question.deleteMany({ where: { id: { in: [q1.id, q2.id, q3.id] } } });
+      await prisma.topic.deleteMany({ where: { id: { in: [topicA.id, topicB.id, topicC.id] } } });
+    }
+  });
+
+  it("filters by multiple topics with mode=all (AND)", async () => {
+    const topicA = await prisma.topic.create({ data: { name: "__test_topicA_all" } });
+    const topicB = await prisma.topic.create({ data: { name: "__test_topicB_all" } });
+
+    const q1 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q1 all (both topics)",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicA.id }, { id: topicB.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+    const q2 = await prisma.question.create({
+      data: {
+        statement: "__test_topic_filter Q2 all (one topic only)",
+        difficulty: "EASY",
+        institutionId,
+        topics: { connect: [{ id: topicA.id }] },
+        alternatives: {
+          create: [
+            { text: "A", isCorrect: true, position: 0 },
+            { text: "B", isCorrect: false, position: 1 },
+            { text: "C", isCorrect: false, position: 2 },
+            { text: "D", isCorrect: false, position: 3 },
+          ],
+        },
+      },
+    });
+
+    try {
+      const url = new URL(`http://test/api/v1/questions?topicIds=${topicA.id}&topicIds=${topicB.id}&topicMatchMode=all`);
+      const res = await GET(new Request(url));
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      const ids = body.data.map((q: { id: string }) => q.id);
+      expect(ids).toContain(q1.id);
+      expect(ids).not.toContain(q2.id);
+    } finally {
+      await prisma.alternative.deleteMany({ where: { questionId: { in: [q1.id, q2.id] } } });
+      await prisma.question.deleteMany({ where: { id: { in: [q1.id, q2.id] } } });
+      await prisma.topic.deleteMany({ where: { id: { in: [topicA.id, topicB.id] } } });
+    }
+  });
+
+  it("returns topics array on each question", async () => {
+    const res = await GET(makeRequest());
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(body.data)).toBe(true);
+    for (const q of body.data) {
+      expect(q).toHaveProperty("topics");
+      expect(Array.isArray(q.topics)).toBe(true);
+    }
+  });
 });
