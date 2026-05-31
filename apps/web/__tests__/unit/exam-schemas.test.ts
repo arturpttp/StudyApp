@@ -75,3 +75,21 @@ describe("patchExamQuestionBodySchema", () => {
     ).toBe(false);
   });
 });
+
+describe("generateExamBodySchema — topics", () => {
+  it("defaults topicIds to [] and topicMatchMode to 'any'", () => {
+    const parsed = generateExamBodySchema.parse({ count: 5 });
+    expect(parsed.topicIds).toEqual([]);
+    expect(parsed.topicMatchMode).toBe("any");
+  });
+
+  it("accepts topicIds and topicMatchMode", () => {
+    const parsed = generateExamBodySchema.parse({
+      count: 5,
+      topicIds: ["t1", "t2"],
+      topicMatchMode: "all",
+    });
+    expect(parsed.topicIds).toEqual(["t1", "t2"]);
+    expect(parsed.topicMatchMode).toBe("all");
+  });
+});

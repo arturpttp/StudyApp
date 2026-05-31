@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+const topicIdsSchema = z
+  .union([z.string(), z.array(z.string())])
+  .optional()
+  .transform((v) => {
+    if (v === undefined) return [];
+    return Array.isArray(v) ? v : [v];
+  });
+
 export const questionsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -11,6 +19,8 @@ export const questionsQuerySchema = z.object({
     .enum(["true", "false"])
     .transform((v) => v === "true")
     .optional(),
+  topicIds: topicIdsSchema,
+  topicMatchMode: z.enum(["any", "all"]).optional().default("any"),
 });
 
 export type QuestionsQuery = z.infer<typeof questionsQuerySchema>;

@@ -113,3 +113,26 @@ describe("answerBodySchema", () => {
     expect(result.success).toBe(false);
   });
 });
+
+describe("questionsQuerySchema — topics", () => {
+  it("defaults topicIds to [] and topicMatchMode to 'any'", () => {
+    const parsed = questionsQuerySchema.parse({});
+    expect(parsed.topicIds).toEqual([]);
+    expect(parsed.topicMatchMode).toBe("any");
+  });
+
+  it("accepts a single topicId as string", () => {
+    const parsed = questionsQuerySchema.parse({ topicIds: "t1" });
+    expect(parsed.topicIds).toEqual(["t1"]);
+  });
+
+  it("accepts multiple topicIds as array", () => {
+    const parsed = questionsQuerySchema.parse({ topicIds: ["t1", "t2"] });
+    expect(parsed.topicIds).toEqual(["t1", "t2"]);
+  });
+
+  it("rejects invalid topicMatchMode", () => {
+    const result = questionsQuerySchema.safeParse({ topicMatchMode: "both" });
+    expect(result.success).toBe(false);
+  });
+});
