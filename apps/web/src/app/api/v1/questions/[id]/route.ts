@@ -22,6 +22,7 @@ export async function GET(_req: Request, ctx: RouteContext): Promise<Response> {
         select: { id: true, text: true, position: true },
         orderBy: { position: "asc" },
       },
+      topics: { select: { id: true, name: true }, orderBy: { name: "asc" } },
     },
   });
 
