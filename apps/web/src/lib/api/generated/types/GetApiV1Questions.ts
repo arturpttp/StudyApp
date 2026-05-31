@@ -21,6 +21,13 @@ export const getApiV1QuestionsQueryParamsUnansweredEnum = {
 
 export type GetApiV1QuestionsQueryParamsUnansweredEnumKey = (typeof getApiV1QuestionsQueryParamsUnansweredEnum)[keyof typeof getApiV1QuestionsQueryParamsUnansweredEnum];
 
+export const getApiV1QuestionsQueryParamsTopicMatchModeEnum = {
+    any: "any",
+    all: "all"
+} as const;
+
+export type GetApiV1QuestionsQueryParamsTopicMatchModeEnumKey = (typeof getApiV1QuestionsQueryParamsTopicMatchModeEnum)[keyof typeof getApiV1QuestionsQueryParamsTopicMatchModeEnum];
+
 export type GetApiV1QuestionsQueryParams = {
     /**
      * @minLength 1
@@ -55,6 +62,14 @@ export type GetApiV1QuestionsQueryParams = {
      * @type string | undefined
     */
     unanswered?: GetApiV1QuestionsQueryParamsUnansweredEnumKey;
+    /**
+     * @type array | undefined
+    */
+    topicIds?: string[];
+    /**
+     * @type string | undefined
+    */
+    topicMatchMode?: GetApiV1QuestionsQueryParamsTopicMatchModeEnumKey;
 };
 
 /**

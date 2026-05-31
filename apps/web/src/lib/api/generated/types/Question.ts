@@ -6,6 +6,7 @@
 import type { Alternative } from "./Alternative.ts";
 import type { Institution } from "./Institution.ts";
 import type { Subject } from "./Subject.ts";
+import type { Topic } from "./Topic.ts";
 
 export const questionDifficultyEnum = {
     EASY: "EASY",
@@ -32,10 +33,7 @@ export type Question = {
      * @type integer,null
     */
     year: number | null;
-    /**
-     * @type object
-    */
-    subject: Subject;
+    subject: (Subject & object);
     /**
      * @type object
     */
@@ -44,4 +42,8 @@ export type Question = {
      * @type array
     */
     alternatives: Alternative[];
+    /**
+     * @type array
+    */
+    topics: Topic[];
 };

@@ -33,6 +33,13 @@ export const postApiV1ExamsGenerateMutationRequestDifficultyEnum = {
 
 export type PostApiV1ExamsGenerateMutationRequestDifficultyEnumKey = (typeof postApiV1ExamsGenerateMutationRequestDifficultyEnum)[keyof typeof postApiV1ExamsGenerateMutationRequestDifficultyEnum];
 
+export const postApiV1ExamsGenerateMutationRequestTopicMatchModeEnum = {
+    any: "any",
+    all: "all"
+} as const;
+
+export type PostApiV1ExamsGenerateMutationRequestTopicMatchModeEnumKey = (typeof postApiV1ExamsGenerateMutationRequestTopicMatchModeEnum)[keyof typeof postApiV1ExamsGenerateMutationRequestTopicMatchModeEnum];
+
 export type PostApiV1ExamsGenerateMutationRequest = {
     /**
      * @type string | undefined
@@ -54,6 +61,14 @@ export type PostApiV1ExamsGenerateMutationRequest = {
      * @type integer,null
     */
     timeLimit?: number | null;
+    /**
+     * @type array | undefined
+    */
+    topicIds?: string[];
+    /**
+     * @type string | undefined
+    */
+    topicMatchMode?: PostApiV1ExamsGenerateMutationRequestTopicMatchModeEnumKey;
 };
 
 export type PostApiV1ExamsGenerateMutationResponse = PostApiV1ExamsGenerate201;

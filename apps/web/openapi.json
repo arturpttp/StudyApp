@@ -61,6 +61,21 @@
           "position"
         ]
       },
+      "Topic": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
       "Question": {
         "type": "object",
         "properties": {
@@ -85,7 +100,17 @@
             ]
           },
           "subject": {
-            "$ref": "#/components/schemas/Subject"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Subject"
+              },
+              {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            ]
           },
           "institution": {
             "$ref": "#/components/schemas/Institution"
@@ -94,6 +119,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Alternative"
+            }
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Topic"
             }
           }
         },
@@ -104,7 +135,8 @@
           "year",
           "subject",
           "institution",
-          "alternatives"
+          "alternatives",
+          "topics"
         ]
       },
       "Error": {
@@ -341,6 +373,36 @@
         }
       }
     },
+    "/api/v1/topics": {
+      "get": {
+        "summary": "Listar matérias",
+        "responses": {
+          "200": {
+            "description": "Lista de matérias",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Topic"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/institutions": {
       "get": {
         "summary": "Listar instituições",
@@ -446,6 +508,29 @@
             },
             "required": false,
             "name": "unanswered",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "required": false,
+            "name": "topicIds",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "any",
+                "all"
+              ]
+            },
+            "required": false,
+            "name": "topicMatchMode",
             "in": "query"
           }
         ],
@@ -706,6 +791,19 @@
                     ],
                     "minimum": 5,
                     "maximum": 600
+                  },
+                  "topicIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "topicMatchMode": {
+                    "type": "string",
+                    "enum": [
+                      "any",
+                      "all"
+                    ]
                   }
                 },
                 "required": [
@@ -916,6 +1014,148 @@
           },
           "409": {
             "description": "Simulado já finalizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/questions": {
+      "post": {
+        "summary": "Cadastrar pergunta (admin)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statement": {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  "explanation": {
+                    "type": "string"
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "enum": [
+                      "EASY",
+                      "MEDIUM",
+                      "HARD"
+                    ]
+                  },
+                  "year": {
+                    "type": "integer"
+                  },
+                  "subjectId": {
+                    "type": "string"
+                  },
+                  "institutionId": {
+                    "type": "string"
+                  },
+                  "topicIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "newTopicNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "alternatives": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string"
+                        },
+                        "isCorrect": {
+                          "type": "boolean"
+                        },
+                        "position": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "isCorrect",
+                        "position"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "statement",
+                  "difficulty",
+                  "institutionId",
+                  "topicIds",
+                  "newTopicNames",
+                  "alternatives"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pergunta criada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Acesso restrito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
             "content": {
               "application/json": {
                 "schema": {

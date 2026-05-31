@@ -28,6 +28,11 @@ const AlternativeSchema = registry.register(
   z.object({ id: z.string(), text: z.string(), position: z.number().int() }),
 );
 
+const TopicSchema = registry.register(
+  "Topic",
+  z.object({ id: z.string(), name: z.string() }),
+);
+
 const QuestionSchema = registry.register(
   "Question",
   z.object({
@@ -35,9 +40,10 @@ const QuestionSchema = registry.register(
     statement: z.string(),
     difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
     year: z.number().int().nullable(),
-    subject: SubjectSchema,
+    subject: SubjectSchema.nullable(),
     institution: InstitutionSchema,
     alternatives: z.array(AlternativeSchema),
+    topics: z.array(TopicSchema),
   }),
 );
 
@@ -59,6 +65,24 @@ registry.registerPath({
     200: {
       description: "Lista de especialidades",
       content: { "application/json": { schema: z.array(SubjectSchema) } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: GET /api/v1/topics ---
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/topics",
+  summary: "Listar matérias",
+  responses: {
+    200: {
+      description: "Lista de matérias",
+      content: { "application/json": { schema: z.array(TopicSchema) } },
     },
     401: {
       description: "Não autenticado",
@@ -100,6 +124,8 @@ registry.registerPath({
       difficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
       year: z.coerce.number().int().optional(),
       unanswered: z.enum(["true", "false"]).optional(),
+      topicIds: z.array(z.string()).optional(),
+      topicMatchMode: z.enum(["any", "all"]).optional(),
     }),
   },
   responses: {
@@ -285,6 +311,8 @@ registry.registerPath({
             difficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
             count: z.number().int().min(5).max(100),
             timeLimit: z.number().int().min(5).max(600).nullable().optional(),
+            topicIds: z.array(z.string()).optional(),
+            topicMatchMode: z.enum(["any", "all"]).optional(),
           }),
         },
       },
@@ -384,6 +412,60 @@ registry.registerPath({
     },
     409: {
       description: "Simulado já finalizado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: POST /api/v1/admin/questions ---
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/admin/questions",
+  summary: "Cadastrar pergunta (admin)",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            statement: z.string().min(10),
+            explanation: z.string().optional(),
+            difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
+            year: z.number().int().optional(),
+            subjectId: z.string().optional(),
+            institutionId: z.string(),
+            topicIds: z.array(z.string()),
+            newTopicNames: z.array(z.string()),
+            alternatives: z.array(
+              z.object({
+                text: z.string(),
+                isCorrect: z.boolean(),
+                position: z.number().int(),
+              }),
+            ),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "Pergunta criada",
+      content: { "application/json": { schema: z.object({ id: z.string() }) } },
+    },
+    400: {
+      description: "Dados inválidos",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    403: {
+      description: "Acesso restrito",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    404: {
+      description: "Recurso não encontrado",
       content: { "application/json": { schema: ErrorSchema } },
     },
   },
