@@ -84,6 +84,9 @@ afterAll(async () => {
   await prisma.question.deleteMany({
     where: { statement: { startsWith: "__test_exgen" } },
   });
+  await prisma.topic.deleteMany({
+    where: { name: { startsWith: "__test_examgen_topic" } },
+  });
   await prisma.subject.deleteMany({
     where: { name: { startsWith: TEST_SUBJECT_PREFIX } },
   });
@@ -163,5 +166,201 @@ describe("POST /api/v1/exams/generate", () => {
       orderBy: { order: "asc" },
     });
     expect(eqs.map((e) => e.order)).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it("filters question pool by topicIds (mode=any)", async () => {
+    const institution = await prisma.institution.findFirst();
+
+    const topicX = await prisma.topic.create({ data: { name: "__test_examgen_topicX" } });
+    const topicY = await prisma.topic.create({ data: { name: "__test_examgen_topicY" } });
+
+    // 5 questions linked to topicX
+    for (let i = 0; i < 5; i++) {
+      await prisma.question.create({
+        data: {
+          statement: `__test_exgen topicX ${i}`,
+          difficulty: "EASY",
+          subjectId: subjectA,
+          institutionId: institution!.id,
+          alternatives: {
+            create: [
+              { text: "Right", isCorrect: true, position: 0 },
+              { text: "Wrong", isCorrect: false, position: 1 },
+            ],
+          },
+          topics: { connect: [{ id: topicX.id }] },
+        },
+      });
+    }
+
+    // 5 questions linked to topicY
+    for (let i = 0; i < 5; i++) {
+      await prisma.question.create({
+        data: {
+          statement: `__test_exgen topicY ${i}`,
+          difficulty: "EASY",
+          subjectId: subjectA,
+          institutionId: institution!.id,
+          alternatives: {
+            create: [
+              { text: "Right", isCorrect: true, position: 0 },
+              { text: "Wrong", isCorrect: false, position: 1 },
+            ],
+          },
+          topics: { connect: [{ id: topicY.id }] },
+        },
+      });
+    }
+
+    // 5 questions linked to neither
+    for (let i = 0; i < 5; i++) {
+      await prisma.question.create({
+        data: {
+          statement: `__test_exgen topicNone ${i}`,
+          difficulty: "EASY",
+          subjectId: subjectA,
+          institutionId: institution!.id,
+          alternatives: {
+            create: [
+              { text: "Right", isCorrect: true, position: 0 },
+              { text: "Wrong", isCorrect: false, position: 1 },
+            ],
+          },
+        },
+      });
+    }
+
+    const res = await POST(
+      makeRequest({ count: 5, topicIds: [topicX.id], topicMatchMode: "any" }),
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json();
+
+    const exam = await prisma.exam.findUnique({
+      where: { id: body.id },
+      include: {
+        questions: {
+          include: {
+            question: { include: { topics: true } },
+          },
+        },
+      },
+    });
+    expect(exam).toBeTruthy();
+    expect(exam!.questions.length).toBe(5);
+    for (const eq of exam!.questions) {
+      const topicIds = eq.question.topics.map((t) => t.id);
+      expect(topicIds).toContain(topicX.id);
+    }
+
+    // Cleanup topics
+    await prisma.topic.delete({ where: { id: topicX.id } });
+    await prisma.topic.delete({ where: { id: topicY.id } });
+  });
+
+  it("filters with mode=all returning only intersection", async () => {
+    const institution = await prisma.institution.findFirst();
+
+    const topicX = await prisma.topic.create({ data: { name: "__test_examgen_topicX2" } });
+    const topicY = await prisma.topic.create({ data: { name: "__test_examgen_topicY2" } });
+
+    // 5 questions linked to BOTH topicX and topicY
+    for (let i = 0; i < 5; i++) {
+      await prisma.question.create({
+        data: {
+          statement: `__test_exgen both ${i}`,
+          difficulty: "EASY",
+          subjectId: subjectA,
+          institutionId: institution!.id,
+          alternatives: {
+            create: [
+              { text: "Right", isCorrect: true, position: 0 },
+              { text: "Wrong", isCorrect: false, position: 1 },
+            ],
+          },
+          topics: { connect: [{ id: topicX.id }, { id: topicY.id }] },
+        },
+      });
+    }
+
+    // 5 questions linked to only topicX
+    for (let i = 0; i < 5; i++) {
+      await prisma.question.create({
+        data: {
+          statement: `__test_exgen onlyX ${i}`,
+          difficulty: "EASY",
+          subjectId: subjectA,
+          institutionId: institution!.id,
+          alternatives: {
+            create: [
+              { text: "Right", isCorrect: true, position: 0 },
+              { text: "Wrong", isCorrect: false, position: 1 },
+            ],
+          },
+          topics: { connect: [{ id: topicX.id }] },
+        },
+      });
+    }
+
+    const res = await POST(
+      makeRequest({ count: 5, topicIds: [topicX.id, topicY.id], topicMatchMode: "all" }),
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json();
+
+    const exam = await prisma.exam.findUnique({
+      where: { id: body.id },
+      include: {
+        questions: {
+          include: {
+            question: { include: { topics: true } },
+          },
+        },
+      },
+    });
+    expect(exam).toBeTruthy();
+    expect(exam!.questions.length).toBe(5);
+    for (const eq of exam!.questions) {
+      const topicIds = eq.question.topics.map((t) => t.id);
+      expect(topicIds).toContain(topicX.id);
+      expect(topicIds).toContain(topicY.id);
+    }
+
+    // Cleanup topics
+    await prisma.topic.delete({ where: { id: topicX.id } });
+    await prisma.topic.delete({ where: { id: topicY.id } });
+  });
+
+  it("returns 422 when topic filter shrinks pool below count", async () => {
+    const institution = await prisma.institution.findFirst();
+
+    const topicZ = await prisma.topic.create({ data: { name: "__test_examgen_topicZ" } });
+
+    // Only 2 questions linked to topicZ
+    for (let i = 0; i < 2; i++) {
+      await prisma.question.create({
+        data: {
+          statement: `__test_exgen topicZ ${i}`,
+          difficulty: "EASY",
+          subjectId: subjectA,
+          institutionId: institution!.id,
+          alternatives: {
+            create: [
+              { text: "Right", isCorrect: true, position: 0 },
+              { text: "Wrong", isCorrect: false, position: 1 },
+            ],
+          },
+          topics: { connect: [{ id: topicZ.id }] },
+        },
+      });
+    }
+
+    const res = await POST(
+      makeRequest({ count: 5, topicIds: [topicZ.id] }),
+    );
+    expect(res.status).toBe(422);
+
+    // Cleanup topic
+    await prisma.topic.delete({ where: { id: topicZ.id } });
   });
 });

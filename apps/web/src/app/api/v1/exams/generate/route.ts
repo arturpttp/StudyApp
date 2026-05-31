@@ -28,14 +28,24 @@ export async function POST(req: Request): Promise<Response> {
     return Response.json({ error: "Dados inválidos.", fields }, { status: 400 });
   }
 
-  const { subjectId, difficulty, count, timeLimit } = parsed.data;
+  const { subjectId, difficulty, count, timeLimit, topicIds, topicMatchMode } = parsed.data;
+
+  const where: Record<string, unknown> = {
+    status: "ACTIVE",
+    ...(subjectId && { subjectId }),
+    ...(difficulty && { difficulty }),
+  };
+
+  if (topicIds && topicIds.length > 0) {
+    if (topicMatchMode === "all") {
+      where.AND = topicIds.map((id) => ({ topics: { some: { id } } }));
+    } else {
+      where.topics = { some: { id: { in: topicIds } } };
+    }
+  }
 
   const candidates = await prisma.question.findMany({
-    where: {
-      status: "ACTIVE",
-      ...(subjectId && { subjectId }),
-      ...(difficulty && { difficulty }),
-    },
+    where,
     select: { id: true },
   });
 
