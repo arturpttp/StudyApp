@@ -36,6 +36,7 @@ export async function upsertQuestion(
   row: CsvRow,
   subjectMap: Map<string, string>,
   institutionMap: Map<string, string>,
+  topicMap: Map<string, string>,
 ): Promise<void> {
   const subjectId = subjectMap.get(row.subject);
   if (!subjectId) {
@@ -45,6 +46,12 @@ export async function upsertQuestion(
   if (!institutionId) {
     throw new Error(`Unknown institution: "${row.institution}"`);
   }
+
+  const topicIds = row.topics.map((name) => {
+    const id = topicMap.get(name);
+    if (!id) throw new Error(`Unknown topic: "${name}"`);
+    return id;
+  });
 
   const alternatives = (["a", "b", "c", "d", "e"] as const).map((letter) => ({
     text: row[letter],
@@ -66,6 +73,9 @@ export async function upsertQuestion(
         year: row.year,
         subjectId,
         institutionId,
+        topics: {
+          set: topicIds.map((id) => ({ id })),
+        },
       },
     });
 
@@ -99,6 +109,9 @@ export async function upsertQuestion(
         year: row.year,
         subjectId,
         institutionId,
+        topics: {
+          connect: topicIds.map((id) => ({ id })),
+        },
         alternatives: {
           create: alternatives,
         },
