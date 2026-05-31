@@ -1,6 +1,13 @@
 "use client";
 
-import { useQueryState, parseAsString, parseAsInteger } from "nuqs";
+import {
+  useQueryState,
+  useQueryStates,
+  parseAsString,
+  parseAsInteger,
+  parseAsArrayOf,
+  parseAsStringEnum,
+} from "nuqs";
 import { useGetApiV1Questions } from "@/lib/api/generated/hooks/useGetApiV1Questions";
 import { FilterSidebar } from "./FilterSidebar";
 import { QuestionCard } from "./QuestionCard";
@@ -14,8 +21,16 @@ export function QuestionBrowser() {
   const [institutionId, setInstitutionId] = useQueryState("institutionId", parseAsString);
   const [difficulty, setDifficulty] = useQueryState("difficulty", parseAsString);
   const [year, setYear] = useQueryState("year", parseAsString);
+  const [topicIds, setTopicIds] = useQueryState(
+    "topicIds",
+    parseAsArrayOf(parseAsString).withDefault([]),
+  );
+  const [topicMatchMode, setTopicMatchMode] = useQueryState(
+    "topicMatchMode",
+    parseAsStringEnum<"any" | "all">(["any", "all"]).withDefault("any"),
+  );
 
-  const filters = { subjectId, institutionId, difficulty, year };
+  const filters = { subjectId, institutionId, difficulty, year, topicIds, topicMatchMode };
 
   const params: GetApiV1QuestionsQueryParams = {
     page,
@@ -24,20 +39,23 @@ export function QuestionBrowser() {
     ...(institutionId && { institutionId }),
     ...(difficulty && { difficulty: difficulty as "EASY" | "MEDIUM" | "HARD" }),
     ...(year && { year: Number(year) }),
+    ...(topicIds.length > 0 && { topicIds, topicMatchMode }),
   };
 
   const { data, isLoading, error } = useGetApiV1Questions(params);
 
   const totalPages = data ? Math.ceil(data.total / data.limit) : 0;
 
-  function handleFilterChange(key: string, value: string | null) {
-    const setters: Record<string, (v: string | null) => void> = {
-      subjectId: setSubjectId,
-      institutionId: setInstitutionId,
-      difficulty: setDifficulty,
-      year: setYear,
-    };
-    setters[key]?.(value);
+  function handleFilterChange<K extends keyof typeof filters>(
+    key: K,
+    value: (typeof filters)[K],
+  ) {
+    if (key === "subjectId") setSubjectId(value as string | null);
+    else if (key === "institutionId") setInstitutionId(value as string | null);
+    else if (key === "difficulty") setDifficulty(value as string | null);
+    else if (key === "year") setYear(value as string | null);
+    else if (key === "topicIds") setTopicIds(value as string[]);
+    else if (key === "topicMatchMode") setTopicMatchMode(value as "any" | "all");
     setPage(1);
   }
 
@@ -46,6 +64,8 @@ export function QuestionBrowser() {
     setInstitutionId(null);
     setDifficulty(null);
     setYear(null);
+    setTopicIds([]);
+    setTopicMatchMode("any");
     setPage(1);
   }
 

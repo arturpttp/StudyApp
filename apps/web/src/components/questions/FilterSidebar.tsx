@@ -2,14 +2,18 @@
 
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
+import { TopicMultiSelect } from "@/components/ui/TopicMultiSelect";
 import { useGetApiV1Subjects } from "@/lib/api/generated/hooks/useGetApiV1Subjects";
 import { useGetApiV1Institutions } from "@/lib/api/generated/hooks/useGetApiV1Institutions";
+import { useGetApiV1Topics } from "@/lib/api/generated/hooks/useGetApiV1Topics";
 
 interface FilterValues {
   subjectId: string | null;
   institutionId: string | null;
   difficulty: string | null;
   year: string | null;
+  topicIds: string[];
+  topicMatchMode: "any" | "all";
 }
 
 interface FilterSidebarProps {
@@ -34,8 +38,14 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
   const { data: subjects } = useGetApiV1Subjects();
   const { data: institutions } = useGetApiV1Institutions();
+  const { data: topics } = useGetApiV1Topics();
 
-  const hasActiveFilters = Object.values(filters).some(Boolean);
+  const hasActiveFilters =
+    Object.entries(filters).some(([k, v]) => {
+      if (k === "topicIds") return (v as string[]).length > 0;
+      if (k === "topicMatchMode") return false;
+      return Boolean(v);
+    });
 
   return (
     <aside className="space-y-4">
@@ -66,22 +76,20 @@ export function FilterSidebar({
           </Select>
         </label>
 
-        <label className="block">
-          <span className="mb-1 block text-xs text-muted">Instituição</span>
-          <Select
-            value={filters.institutionId ?? ""}
-            onChange={(e) =>
-              onFilterChange("institutionId", e.target.value || null)
-            }
-            placeholder="Todas"
-          >
-            {institutions?.map((i) => (
-              <option key={i.id} value={i.id}>
-                {i.name}
-              </option>
-            ))}
-          </Select>
-        </label>
+        <div className="mb-3">
+          <TopicMultiSelect
+            topics={topics ?? []}
+            selectedIds={filters.topicIds}
+            matchMode={filters.topicMatchMode}
+            onToggle={(id) => {
+              const next = filters.topicIds.includes(id)
+                ? filters.topicIds.filter((x) => x !== id)
+                : [...filters.topicIds, id];
+              onFilterChange("topicIds", next);
+            }}
+            onMatchModeChange={(mode) => onFilterChange("topicMatchMode", mode)}
+          />
+        </div>
 
         <label className="block">
           <span className="mb-1 block text-xs text-muted">Dificuldade</span>
@@ -95,6 +103,23 @@ export function FilterSidebar({
             {DIFFICULTIES.map((d) => (
               <option key={d.value} value={d.value}>
                 {d.label}
+              </option>
+            ))}
+          </Select>
+        </label>
+
+        <label className="block">
+          <span className="mb-1 block text-xs text-muted">Instituição</span>
+          <Select
+            value={filters.institutionId ?? ""}
+            onChange={(e) =>
+              onFilterChange("institutionId", e.target.value || null)
+            }
+            placeholder="Todas"
+          >
+            {institutions?.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.name}
               </option>
             ))}
           </Select>
