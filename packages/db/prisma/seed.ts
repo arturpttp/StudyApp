@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js";
-import { SUBJECTS, INSTITUTIONS } from "./seed/taxonomies.js";
+import { SUBJECTS, INSTITUTIONS, TOPICS } from "./seed/taxonomies.js";
 import { parseCsv, upsertQuestion } from "./seed/ingest.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -15,6 +15,7 @@ export interface SeedOptions {
 export interface SeedResult {
   subjects: number;
   institutions: number;
+  topics: number;
   questions: number;
 }
 
@@ -48,6 +49,16 @@ export async function seed(options: SeedOptions = {}): Promise<SeedResult> {
       institutionMap.set(name, record.id);
     }
 
+    const topicMap = new Map<string, string>();
+    for (const name of TOPICS) {
+      const record = await prisma.topic.upsert({
+        where: { name },
+        create: { name },
+        update: {},
+      });
+      topicMap.set(name, record.id);
+    }
+
     const files = readdirSync(sourcesDir)
       .filter((f) => f.endsWith(".csv"))
       .sort();
@@ -56,7 +67,7 @@ export async function seed(options: SeedOptions = {}): Promise<SeedResult> {
     for (const file of files) {
       const rows = parseCsv(join(sourcesDir, file));
       for (const row of rows) {
-        await upsertQuestion(prisma, row, subjectMap, institutionMap);
+        await upsertQuestion(prisma, row, subjectMap, institutionMap, topicMap);
         questionCount++;
       }
     }
@@ -64,6 +75,7 @@ export async function seed(options: SeedOptions = {}): Promise<SeedResult> {
     const result: SeedResult = {
       subjects: subjectMap.size,
       institutions: institutionMap.size,
+      topics: topicMap.size,
       questions: questionCount,
     };
 
