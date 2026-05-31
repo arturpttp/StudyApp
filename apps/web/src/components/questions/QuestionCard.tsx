@@ -24,6 +24,18 @@ export function QuestionCard({ question }: QuestionCardProps) {
           </>
         )}
       </div>
+      {question.topics.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-1">
+          {question.topics.map((t) => (
+            <span
+              key={t.id}
+              className="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 text-xs text-muted"
+            >
+              {t.name}
+            </span>
+          ))}
+        </div>
+      )}
       <p className="line-clamp-2 text-sm text-foreground">
         {question.statement}
       </p>

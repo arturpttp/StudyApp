@@ -30,6 +30,7 @@ export default async function QuestionDetailPage({ params }: PageProps) {
         select: { id: true, text: true, position: true },
         orderBy: { position: "asc" },
       },
+      topics: { select: { id: true, name: true }, orderBy: { name: "asc" } },
     },
   });
 
@@ -63,6 +64,19 @@ export default async function QuestionDetailPage({ params }: PageProps) {
           </>
         )}
       </div>
+
+      {question.topics.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {question.topics.map((t) => (
+            <span
+              key={t.id}
+              className="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 text-xs text-muted"
+            >
+              {t.name}
+            </span>
+          ))}
+        </div>
+      )}
 
       <QuestionSolver question={question} previousAnswer={previousAnswer} />
     </section>
