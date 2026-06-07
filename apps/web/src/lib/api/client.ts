@@ -21,7 +21,14 @@ export async function client<TData, TError = unknown, TBody = unknown>(
 
   if (options.params) {
     for (const [key, value] of Object.entries(options.params)) {
-      if (value !== undefined && value !== null) {
+      if (value === undefined || value === null) continue;
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          if (item !== undefined && item !== null) {
+            url.searchParams.append(key, String(item));
+          }
+        }
+      } else {
         url.searchParams.set(key, String(value));
       }
     }
