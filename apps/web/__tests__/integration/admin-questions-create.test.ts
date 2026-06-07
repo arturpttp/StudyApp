@@ -33,6 +33,16 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
+  await prisma.alternative.deleteMany({
+    where: { question: { statement: { startsWith: TEST_PREFIX } } },
+  });
+  await prisma.question.deleteMany({
+    where: { statement: { startsWith: TEST_PREFIX } },
+  });
+  await prisma.topic.deleteMany({ where: { name: { startsWith: TEST_PREFIX } } });
+  await prisma.institution.deleteMany({
+    where: { name: { startsWith: TEST_PREFIX } },
+  });
   await prisma.$disconnect();
 });
 
