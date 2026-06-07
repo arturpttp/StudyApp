@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface Topic {
@@ -24,35 +25,92 @@ export function TopicMultiSelect({
   onMatchModeChange,
   label = "Matérias",
 }: TopicMultiSelectProps) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDocClick(e: MouseEvent) {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [open]);
+
+  const selectedTopics = topics.filter((t) => selectedIds.includes(t.id));
+  const isLoading = topics.length === 0;
+
+  const triggerLabel =
+    selectedIds.length === 0
+      ? "Selecionar matérias"
+      : `${selectedIds.length} selecionada${selectedIds.length > 1 ? "s" : ""}`;
+
   return (
-    <div className="space-y-2">
+    <div ref={rootRef} className="relative space-y-2">
       <span className="block text-xs text-muted">{label}</span>
-      <div className="max-h-40 overflow-y-auto rounded border border-border bg-background p-2 space-y-1">
-        {topics.length === 0 ? (
-          <p className="text-xs text-muted">Carregando...</p>
-        ) : (
-          topics.map((t) => {
-            const checked = selectedIds.includes(t.id);
+
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={isLoading}
+        className={twMerge(
+          "flex w-full items-center justify-between rounded border border-border bg-background px-3 py-2 text-sm transition-colors cursor-pointer hover:border-accent disabled:cursor-default disabled:opacity-60",
+          open && "border-accent",
+        )}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className={selectedIds.length === 0 ? "text-muted" : "text-foreground"}>
+          {isLoading ? "Carregando..." : triggerLabel}
+        </span>
+        <span className="text-muted">{open ? "▴" : "▾"}</span>
+      </button>
+
+      {open && !isLoading && (
+        <ul
+          role="listbox"
+          aria-multiselectable
+          className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded border border-border bg-surface shadow-lg"
+        >
+          {topics.map((t) => {
+            const selected = selectedIds.includes(t.id);
             return (
-              <label
+              <li
                 key={t.id}
+                role="option"
+                aria-selected={selected}
+                onClick={() => onToggle(t.id)}
                 className={twMerge(
-                  "flex items-center gap-2 rounded px-2 py-1 text-sm cursor-pointer hover:bg-surface",
-                  checked && "bg-surface",
+                  "flex items-center justify-between px-3 py-2 text-sm transition-colors cursor-pointer hover:bg-background",
+                  selected && "bg-background",
                 )}
               >
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => onToggle(t.id)}
-                  className="cursor-pointer"
-                />
-                <span className="text-foreground">{t.name}</span>
-              </label>
+                <span className={selected ? "text-accent font-medium" : "text-foreground"}>
+                  {t.name}
+                </span>
+                {selected && <span className="text-accent">✓</span>}
+              </li>
             );
-          })
-        )}
-      </div>
+          })}
+        </ul>
+      )}
+
+      {selectedTopics.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {selectedTopics.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => onToggle(t.id)}
+              className="inline-flex items-center gap-1 rounded-full border border-accent bg-surface px-2 py-0.5 text-xs text-accent cursor-pointer hover:bg-background"
+              aria-label={`Remover ${t.name}`}
+            >
+              {t.name} ×
+            </button>
+          ))}
+        </div>
+      )}
+
       {selectedIds.length > 1 && (
         <div className="flex items-center gap-3 text-xs text-muted">
           <span>Combinar:</span>
