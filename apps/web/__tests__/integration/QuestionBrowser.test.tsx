@@ -4,14 +4,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock nuqs — return simple state hooks
 vi.mock("nuqs", () => {
-  const states: Record<string, string | null> = {};
+  const states: Record<string, unknown> = {};
+  const DEFAULTS: Record<string, unknown> = {
+    topicIds: [],
+    topicMatchMode: "any",
+  };
 
   function useQueryState(key: string, _opts?: unknown) {
     const { useState } = require("react");
-    const [val, setVal] = useState<string | null>(states[key] ?? null);
+    const [val, setVal] = useState<unknown>(states[key] ?? DEFAULTS[key] ?? null);
     return [
       val,
-      (v: string | null | ((prev: string | null) => string | null)) => {
+      (v: unknown) => {
         const next = typeof v === "function" ? v(val) : v;
         states[key] = next;
         setVal(next);
@@ -24,6 +28,7 @@ vi.mock("nuqs", () => {
     parseAsString: { withDefault: () => ({}) },
     parseAsInteger: { withDefault: () => ({}) },
     parseAsStringEnum: () => ({ withDefault: () => ({}) }),
+    parseAsArrayOf: () => ({ withDefault: () => ({}) }),
   };
 });
 
@@ -43,6 +48,7 @@ vi.mock("@/lib/api/generated/hooks/useGetApiV1Questions", () => ({
             { id: "a1", text: "Mitocôndria", position: 0 },
             { id: "a2", text: "Ribossomo", position: 1 },
           ],
+          topics: [],
         },
       ],
       total: 1,
@@ -63,6 +69,12 @@ vi.mock("@/lib/api/generated/hooks/useGetApiV1Subjects", () => ({
 vi.mock("@/lib/api/generated/hooks/useGetApiV1Institutions", () => ({
   useGetApiV1Institutions: vi.fn().mockReturnValue({
     data: [{ id: "i1", name: "USP" }],
+  }),
+}));
+
+vi.mock("@/lib/api/generated/hooks/useGetApiV1Topics", () => ({
+  useGetApiV1Topics: vi.fn().mockReturnValue({
+    data: [],
   }),
 }));
 
