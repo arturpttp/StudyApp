@@ -30,6 +30,9 @@ export default async function AppLayout({
             <Link href="/exams" className="text-muted hover:text-foreground transition-colors">
               Simulados
             </Link>
+            <Link href="/flashcards" className="text-muted hover:text-foreground transition-colors">
+              Flashcards
+            </Link>
             {session.user.role === "ADMIN" && (
               <Link
                 href="/admin/questions/new"
