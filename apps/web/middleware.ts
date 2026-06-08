@@ -9,6 +9,7 @@ export const config = {
     "/questions/:path*",
     "/exams/:path*",
     "/flashcards/:path*",
+    "/stats/:path*",
     "/admin/:path*",
   ],
 };
