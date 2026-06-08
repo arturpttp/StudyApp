@@ -33,6 +33,23 @@ const TopicSchema = registry.register(
   z.object({ id: z.string(), name: z.string() }),
 );
 
+const FlashcardSchema = registry.register(
+  "Flashcard",
+  z.object({
+    id: z.string(),
+    front: z.string(),
+    back: z.string(),
+    easeFactor: z.number(),
+    interval: z.number().int(),
+    repetitions: z.number().int(),
+    lastReview: z.string().datetime().nullable(),
+    nextReview: z.string().datetime(),
+    questionId: z.string().nullable(),
+    createdAt: z.string().datetime(),
+    topics: z.array(TopicSchema),
+  }),
+);
+
 const QuestionSchema = registry.register(
   "Question",
   z.object({
@@ -466,6 +483,171 @@ registry.registerPath({
     },
     404: {
       description: "Recurso não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: GET /api/v1/flashcards ---
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/flashcards",
+  summary: "Listar flashcards",
+  request: {
+    query: z.object({
+      dueOnly: z.enum(["true", "false"]).optional(),
+      topicIds: z.array(z.string()).optional(),
+    }),
+  },
+  responses: {
+    200: {
+      description: "Lista de flashcards do usuário",
+      content: { "application/json": { schema: z.array(FlashcardSchema) } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: POST /api/v1/flashcards ---
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/flashcards",
+  summary: "Criar flashcard",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            front: z.string().min(1),
+            back: z.string().min(1),
+            topicIds: z.array(z.string()).optional(),
+            questionId: z.string().optional(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "Flashcard criado",
+      content: { "application/json": { schema: z.object({ id: z.string() }) } },
+    },
+    400: {
+      description: "Dados inválidos",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    404: {
+      description: "Recurso não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: GET /api/v1/flashcards/{id} ---
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/flashcards/{id}",
+  summary: "Buscar flashcard",
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    200: {
+      description: "Flashcard",
+      content: { "application/json": { schema: FlashcardSchema } },
+    },
+    404: {
+      description: "Flashcard não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: PATCH /api/v1/flashcards/{id} ---
+registry.registerPath({
+  method: "patch",
+  path: "/api/v1/flashcards/{id}",
+  summary: "Atualizar flashcard",
+  request: {
+    params: z.object({ id: z.string() }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            front: z.string().min(1).optional(),
+            back: z.string().min(1).optional(),
+            topicIds: z.array(z.string()).optional(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    204: { description: "Atualizado" },
+    400: {
+      description: "Dados inválidos",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    404: {
+      description: "Não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: DELETE /api/v1/flashcards/{id} ---
+registry.registerPath({
+  method: "delete",
+  path: "/api/v1/flashcards/{id}",
+  summary: "Excluir flashcard",
+  request: { params: z.object({ id: z.string() }) },
+  responses: {
+    204: { description: "Excluído" },
+    404: {
+      description: "Não encontrado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: PATCH /api/v1/flashcards/{id}/review ---
+registry.registerPath({
+  method: "patch",
+  path: "/api/v1/flashcards/{id}/review",
+  summary: "Revisar flashcard (SM-2)",
+  request: {
+    params: z.object({ id: z.string() }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            rating: z.union([
+              z.literal(0),
+              z.literal(3),
+              z.literal(4),
+              z.literal(5),
+            ]),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Estado pós-revisão",
+      content: { "application/json": { schema: FlashcardSchema } },
+    },
+    400: {
+      description: "Rating inválido",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+    404: {
+      description: "Não encontrado",
       content: { "application/json": { schema: ErrorSchema } },
     },
   },
