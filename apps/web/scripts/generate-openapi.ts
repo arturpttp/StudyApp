@@ -653,6 +653,96 @@ registry.registerPath({
   },
 });
 
+const StatsOverviewSchema = registry.register(
+  "StatsOverview",
+  z.object({
+    totalAnswered: z.number().int(),
+    totalCorrect: z.number().int(),
+    accuracyAll: z.number().int(),
+    totalAnsweredWeek: z.number().int(),
+    accuracyWeek: z.number().int(),
+    currentStreak: z.number().int(),
+  }),
+);
+
+const StatsTopicEntrySchema = registry.register(
+  "StatsTopicEntry",
+  z.object({
+    topicId: z.string(),
+    topicName: z.string(),
+    answered: z.number().int(),
+    correct: z.number().int(),
+    accuracy: z.number().int(),
+  }),
+);
+
+const StatsExamsSchema = registry.register(
+  "StatsExams",
+  z.object({
+    totalFinished: z.number().int(),
+    avgScore: z.number().int(),
+    bestScore: z.number().int(),
+    scores: z.array(
+      z.object({
+        examId: z.string(),
+        date: z.string().datetime(),
+        score: z.number().int(),
+      }),
+    ),
+  }),
+);
+
+// --- Route: GET /api/v1/stats/overview ---
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/stats/overview",
+  summary: "Overview de estudo",
+  responses: {
+    200: {
+      description: "Resumo geral + semanal + streak",
+      content: { "application/json": { schema: StatsOverviewSchema } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: GET /api/v1/stats/by-topic ---
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/stats/by-topic",
+  summary: "Acurácia por matéria (top 8)",
+  responses: {
+    200: {
+      description: "Lista de matérias com contagem + acurácia",
+      content: { "application/json": { schema: z.array(StatsTopicEntrySchema) } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
+// --- Route: GET /api/v1/stats/exams ---
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/stats/exams",
+  summary: "Estatísticas dos simulados",
+  responses: {
+    200: {
+      description: "KPIs + scores por data",
+      content: { "application/json": { schema: StatsExamsSchema } },
+    },
+    401: {
+      description: "Não autenticado",
+      content: { "application/json": { schema: ErrorSchema } },
+    },
+  },
+});
+
 // --- Generate ---
 
 const generator = new OpenApiGeneratorV31(registry.definitions);

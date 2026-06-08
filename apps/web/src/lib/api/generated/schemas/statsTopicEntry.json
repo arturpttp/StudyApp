@@ -1,0 +1,1 @@
+{"type":"object","properties":{"topicId":{"type":"string"},"topicName":{"type":"string"},"answered":{"type":"integer"},"correct":{"type":"integer"},"accuracy":{"type":"integer"}},"required":["topicId","topicName","answered","correct","accuracy"],"x-readme-ref-name":"StatsTopicEntry"}

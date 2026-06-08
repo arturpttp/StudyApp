@@ -14,6 +14,9 @@ export type { GetApiV1Institutions200, GetApiV1Institutions401, GetApiV1Institut
 export type { GetApiV1Questions200, GetApiV1Questions400, GetApiV1Questions401, GetApiV1QuestionsQuery, GetApiV1QuestionsQueryParams, GetApiV1QuestionsQueryParamsDifficultyEnumKey, GetApiV1QuestionsQueryParamsTopicMatchModeEnumKey, GetApiV1QuestionsQueryParamsUnansweredEnumKey, GetApiV1QuestionsQueryResponse } from "./GetApiV1Questions.ts";
 export type { GetApiV1QuestionsId200, GetApiV1QuestionsId404, GetApiV1QuestionsIdPathParams, GetApiV1QuestionsIdQuery, GetApiV1QuestionsIdQueryResponse } from "./GetApiV1QuestionsId.ts";
 export type { GetApiV1QuestionsRandom200, GetApiV1QuestionsRandom404, GetApiV1QuestionsRandomQuery, GetApiV1QuestionsRandomQueryParams, GetApiV1QuestionsRandomQueryParamsDifficultyEnumKey, GetApiV1QuestionsRandomQueryResponse } from "./GetApiV1QuestionsRandom.ts";
+export type { GetApiV1StatsByTopic200, GetApiV1StatsByTopic401, GetApiV1StatsByTopicQuery, GetApiV1StatsByTopicQueryResponse } from "./GetApiV1StatsByTopic.ts";
+export type { GetApiV1StatsExams200, GetApiV1StatsExams401, GetApiV1StatsExamsQuery, GetApiV1StatsExamsQueryResponse } from "./GetApiV1StatsExams.ts";
+export type { GetApiV1StatsOverview200, GetApiV1StatsOverview401, GetApiV1StatsOverviewQuery, GetApiV1StatsOverviewQueryResponse } from "./GetApiV1StatsOverview.ts";
 export type { GetApiV1Subjects200, GetApiV1Subjects401, GetApiV1SubjectsQuery, GetApiV1SubjectsQueryResponse } from "./GetApiV1Subjects.ts";
 export type { GetApiV1Topics200, GetApiV1Topics401, GetApiV1TopicsQuery, GetApiV1TopicsQueryResponse } from "./GetApiV1Topics.ts";
 export type { Institution } from "./Institution.ts";
@@ -26,6 +29,9 @@ export type { PostApiV1ExamsGenerate201, PostApiV1ExamsGenerate400, PostApiV1Exa
 export type { PostApiV1Flashcards201, PostApiV1Flashcards400, PostApiV1Flashcards401, PostApiV1Flashcards404, PostApiV1FlashcardsMutation, PostApiV1FlashcardsMutationRequest, PostApiV1FlashcardsMutationResponse } from "./PostApiV1Flashcards.ts";
 export type { PostApiV1QuestionsIdAnswer200, PostApiV1QuestionsIdAnswer400, PostApiV1QuestionsIdAnswer404, PostApiV1QuestionsIdAnswerMutation, PostApiV1QuestionsIdAnswerMutationRequest, PostApiV1QuestionsIdAnswerMutationResponse, PostApiV1QuestionsIdAnswerPathParams } from "./PostApiV1QuestionsIdAnswer.ts";
 export type { Question, QuestionDifficultyEnumKey } from "./Question.ts";
+export type { StatsExams } from "./StatsExams.ts";
+export type { StatsOverview } from "./StatsOverview.ts";
+export type { StatsTopicEntry } from "./StatsTopicEntry.ts";
 export type { Subject } from "./Subject.ts";
 export type { Topic } from "./Topic.ts";
 export { examFinishedStatusEnum } from "./ExamFinished.ts";

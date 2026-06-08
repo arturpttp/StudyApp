@@ -401,6 +401,107 @@
           "finishedAt",
           "questions"
         ]
+      },
+      "StatsOverview": {
+        "type": "object",
+        "properties": {
+          "totalAnswered": {
+            "type": "integer"
+          },
+          "totalCorrect": {
+            "type": "integer"
+          },
+          "accuracyAll": {
+            "type": "integer"
+          },
+          "totalAnsweredWeek": {
+            "type": "integer"
+          },
+          "accuracyWeek": {
+            "type": "integer"
+          },
+          "currentStreak": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totalAnswered",
+          "totalCorrect",
+          "accuracyAll",
+          "totalAnsweredWeek",
+          "accuracyWeek",
+          "currentStreak"
+        ]
+      },
+      "StatsTopicEntry": {
+        "type": "object",
+        "properties": {
+          "topicId": {
+            "type": "string"
+          },
+          "topicName": {
+            "type": "string"
+          },
+          "answered": {
+            "type": "integer"
+          },
+          "correct": {
+            "type": "integer"
+          },
+          "accuracy": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "topicId",
+          "topicName",
+          "answered",
+          "correct",
+          "accuracy"
+        ]
+      },
+      "StatsExams": {
+        "type": "object",
+        "properties": {
+          "totalFinished": {
+            "type": "integer"
+          },
+          "avgScore": {
+            "type": "integer"
+          },
+          "bestScore": {
+            "type": "integer"
+          },
+          "scores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "examId": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "score": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "examId",
+                "date",
+                "score"
+              ]
+            }
+          }
+        },
+        "required": [
+          "totalFinished",
+          "avgScore",
+          "bestScore",
+          "scores"
+        ]
       }
     },
     "parameters": {}
@@ -1576,6 +1677,90 @@
           },
           "404": {
             "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stats/overview": {
+      "get": {
+        "summary": "Overview de estudo",
+        "responses": {
+          "200": {
+            "description": "Resumo geral + semanal + streak",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsOverview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stats/by-topic": {
+      "get": {
+        "summary": "Acurácia por matéria (top 8)",
+        "responses": {
+          "200": {
+            "description": "Lista de matérias com contagem + acurácia",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StatsTopicEntry"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stats/exams": {
+      "get": {
+        "summary": "Estatísticas dos simulados",
+        "responses": {
+          "200": {
+            "description": "KPIs + scores por data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsExams"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autenticado",
             "content": {
               "application/json": {
                 "schema": {
