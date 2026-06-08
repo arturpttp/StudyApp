@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { DifficultyBadge } from "@/components/ui/DifficultyBadge";
 import { QuestionSolver } from "@/components/questions/QuestionSolver";
 import { getPreviousAnswer } from "@/lib/questions/get-previous-answer";
+import { CreateFlashcardButton } from "@/components/flashcards/CreateFlashcardButton";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -77,6 +78,8 @@ export default async function QuestionDetailPage({ params }: PageProps) {
           ))}
         </div>
       )}
+
+      <CreateFlashcardButton questionId={question.id} />
 
       <QuestionSolver question={question} previousAnswer={previousAnswer} />
     </section>

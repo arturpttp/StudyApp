@@ -80,9 +80,9 @@ model Subject {
 }
 
 model Topic {
-  id        String       @id @default(cuid())
-  name      String       @unique
-  questions Question[]
+  id         String      @id @default(cuid())
+  name       String      @unique
+  questions  Question[]
   flashcards Flashcard[]
 }
 
