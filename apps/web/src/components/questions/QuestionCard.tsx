@@ -14,8 +14,12 @@ export function QuestionCard({ question }: QuestionCardProps) {
     >
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <DifficultyBadge difficulty={question.difficulty} />
-        <span className="text-xs text-muted">{question.subject.name}</span>
-        <span className="text-xs text-muted">·</span>
+        {question.subject && (
+          <>
+            <span className="text-xs text-muted">{question.subject.name}</span>
+            <span className="text-xs text-muted">·</span>
+          </>
+        )}
         <span className="text-xs text-muted">{question.institution.name}</span>
         {question.year && (
           <>

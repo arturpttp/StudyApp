@@ -55,8 +55,12 @@ export default async function QuestionDetailPage({ params }: PageProps) {
 
       <div className="flex flex-wrap items-center gap-2">
         <DifficultyBadge difficulty={question.difficulty} />
-        <span className="text-xs text-muted">{question.subject.name}</span>
-        <span className="text-xs text-muted">&middot;</span>
+        {question.subject && (
+          <>
+            <span className="text-xs text-muted">{question.subject.name}</span>
+            <span className="text-xs text-muted">&middot;</span>
+          </>
+        )}
         <span className="text-xs text-muted">{question.institution.name}</span>
         {question.year && (
           <>
